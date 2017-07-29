@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour {
 			thrusting = true;
 		}
 		if (vertAxis < 0) {
-			if (currentSpeed + acceleration >= 0) {
+			if (currentSpeed - acceleration >= 0) {
 				currentSpeed -= acceleration;
 			}
 		}
@@ -52,6 +52,8 @@ public class PlayerController : MonoBehaviour {
 		} else {
 			if (thrusting)
 				mVars.movementDir = transform.up * currentSpeed * Time.deltaTime;
+			else if (turnAxis != 0)
+				currentSpeed -= acceleration;
 		}
 		transform.position += (mVars.movementDir);
 	}
