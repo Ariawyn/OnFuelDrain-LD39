@@ -43,8 +43,8 @@ public class InputManager : MonoBehaviour {
 			// Set the axis inputs
 			this.horizontalAxis.setPositiveKey(this.controls["Right"]);
 			this.horizontalAxis.setNegativeKey(this.controls["Left"]);
-			this.verticalAxis.setPositiveKey(this.controls["Forward"]);
-			this.verticalAxis.setNegativeKey(this.controls["Backward"]);
+			this.verticalAxis.setPositiveKey(this.controls["Up"]);
+			this.verticalAxis.setNegativeKey(this.controls["Down"]);
 		}
 	}
 
