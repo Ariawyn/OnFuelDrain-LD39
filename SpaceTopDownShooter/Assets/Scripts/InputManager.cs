@@ -40,6 +40,9 @@ public class InputManager : MonoBehaviour {
 			this.controls["Right"] = KeyCode.D;
 			this.controls["Left"] = KeyCode.A;
 
+			// Interaction keys:
+			this.controls["Fire"] = KeyCode.Space;
+
 			// Set the axis inputs
 			this.horizontalAxis.setPositiveKey(this.controls["Right"]);
 			this.horizontalAxis.setNegativeKey(this.controls["Left"]);
