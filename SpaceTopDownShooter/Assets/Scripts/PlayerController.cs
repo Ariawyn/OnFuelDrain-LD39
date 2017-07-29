@@ -32,6 +32,11 @@ public class PlayerController : MonoBehaviour {
 	/// </summary>
 	public GameObject bulletGO;
 
+	/// <summary>
+	/// The speed bullets will move at. NOT the fire rate.
+	/// </summary>
+	public float bulletSpeed = 0.5f;
+
 	public Vector3 debugCurrentVelocity;
 
 	float currentSpeed;
@@ -55,7 +60,7 @@ public class PlayerController : MonoBehaviour {
 		
 		Move ();
 
-
+		Shoot ();
 	}
 
 	void Move() {
@@ -134,6 +139,7 @@ public class PlayerController : MonoBehaviour {
 			GameObject bullet = GameObject.Instantiate (bulletGO);
 			bullet.transform.position = transform.position;
 			bullet.transform.rotation = transform.rotation;
+			bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
 		}
 	}
 
