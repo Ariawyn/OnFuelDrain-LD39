@@ -7,23 +7,23 @@ public class PlayerController : MonoBehaviour {
 	/// <summary>
 	/// The max speed.
 	/// </summary>
-	public float maxSpeed = 2f;
+	public float maxSpeed = 0.05f;
 
 	/// <summary>
 	/// The max velocity value for any of the x,y velocity values.
 	/// </summary>
-	public float maxVelocity = 2f;
+	public float maxVelocity = 0.05f;
 
 	/// <summary>
 	/// This value should be very small! Added to speed while
 	/// input forward, until it reaches maxSpeed.
 	/// </summary>
-	public float acceleration = 0.001f;
+	public float acceleration = 0.0005f;
 
 	/// <summary>
 	/// This is multiplied to the horizontal axis to rotate the ship.
 	/// </summary>
-	public float turnStrength = 2f;
+	public float turnStrength = 5f;
 
 	public Vector3 debugCurrentVelocity;
 
@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 
 		debugCurrentVelocity = mVars.velocity;
 		
