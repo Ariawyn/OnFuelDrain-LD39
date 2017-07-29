@@ -41,16 +41,25 @@ public class PlayerController : MonoBehaviour {
 
 	float currentSpeed;
 	private InputManager inputManager;
+	private AudioManager audioManager;
+
+	// For shooting coroutine
+	private float secondsBetweenBulletFire = 0.25f;
+	private bool isRunningShootingCoroutine = true;
 	MovementVars mVars;
 
 	void Awake() {
 		inputManager = Object.FindObjectOfType<InputManager> ();
+		audioManager = Object.FindObjectOfType<AudioManager>();
 		mVars.Reset ();
 	}
 
 	// Use this for initialization
 	void Start () {
 		currentSpeed = 0;
+
+		// Start running the shoot coroutine, which allows for us to wait a few seconds for when the player can fire after he already did
+		StartCoroutine(Shoot());
 	}
 	
 	// Update is called once per frame
@@ -60,7 +69,7 @@ public class PlayerController : MonoBehaviour {
 		
 		Move ();
 
-		Shoot ();
+		//Shoot ();
 	}
 
 	void Move() {
@@ -134,13 +143,20 @@ public class PlayerController : MonoBehaviour {
 			mVars.velocity.y = 0;
 	}
 
-	void Shoot() {
-		if (inputManager.GetKeyDown ("Fire")) {
-			GameObject bullet = GameObject.Instantiate (bulletGO);
-			bullet.transform.position = transform.position;
-			bullet.transform.rotation = transform.rotation;
-			bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
+	IEnumerator Shoot() {
+		while(isRunningShootingCoroutine) {
+			if (inputManager.GetKey ("Fire")) {
+				this.audioManager.Play("Fire!");
+				GameObject bullet = GameObject.Instantiate (bulletGO);
+				bullet.transform.position = transform.position;
+				bullet.transform.rotation = transform.rotation;
+				bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
+				yield return new WaitForSeconds(secondsBetweenBulletFire);
+			} else {
+				yield return null;
+			}
 		}
+		yield return null;
 	}
 
 	struct MovementVars{

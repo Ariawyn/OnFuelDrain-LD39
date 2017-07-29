@@ -15,7 +15,7 @@ public class AudioManager : MonoBehaviour {
 	private float effectsVolume = 1f;
 	private float defaultPitch = 1f;
 
-	// INIT manager
+	// Initialize manager
 	void Awake() {
 		this.initLibrary();
 		this.loadSavedSoundSettings();
@@ -28,6 +28,8 @@ public class AudioManager : MonoBehaviour {
 	public void Play(string name) {
 		if(this.library.ContainsKey(name)) {
 			Sound s = this.library[name];
+			
+			// Check if the sound is SFX or BGM
 			if(s.isSFX) {
 				// Randomize the effects volume and pitch by their random values
 				s.source.volume = this.effectsVolume * (1 + Random.Range(-s.randomVolumeValue / 2f, s.randomVolumeValue / 2f));

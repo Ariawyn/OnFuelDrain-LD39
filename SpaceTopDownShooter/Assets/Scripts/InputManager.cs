@@ -17,6 +17,17 @@ public class InputManager : MonoBehaviour {
 		this.initControls();
 	}
 
+	public bool GetKey(string keyName) {
+		// Check if the key exists
+		if(this.controls.ContainsKey(keyName)) {
+			// Then we do have the key in the control layout
+			return Input.GetKey(this.controls[keyName]);
+		}
+
+		// We do not have the key registered in our layout
+		return false;
+	}
+
 	public bool GetKeyDown(string keyName) {
 		// Check if the key exists
 		if(this.controls.ContainsKey(keyName)) {

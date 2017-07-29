@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Audio;
 
 // public sound class for handling BGM and SFX
 [System.Serializable]
@@ -25,7 +24,7 @@ public class Sound {
 	// Random values for making effects not sound repetitive, only used if isSFX is true
 	[Range(0f, 0.5f)]
 	public float randomVolumeValue = 0.1f;
-	[Range(0f, 0.5f)]
+	[Range(0f, 0.75f)]
 	public float randomPitchValue = 0.1f;
 
 	// Audio Clip instance for the audio track
