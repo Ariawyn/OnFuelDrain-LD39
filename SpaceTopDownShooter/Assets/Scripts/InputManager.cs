@@ -17,6 +17,17 @@ public class InputManager : MonoBehaviour {
 		this.initControls();
 	}
 
+	public bool GetKeyDown(string keyName) {
+		// Check if the key exists
+		if(this.controls.ContainsKey(keyName)) {
+			// Then we do have the key in the control layout
+			return Input.GetKeyDown(this.controls[keyName]);
+		}
+
+		// We do not have the key registered in our layout
+		return false;
+	}
+
 	private void initControls() {
 		// Attempt to load from player prefs
 		this.controls = this.loadControlLayout();
