@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour {
 	/// </summary>
 	public float maxVelocity = 0.1f;
 
+	public float minVelocity = 0.0004f;
+
 	/// <summary>
 	/// This value should be very small! Added to speed while
 	/// input forward, until it reaches maxSpeed.
@@ -57,6 +59,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Move() {
+		mVars.oldVelocity = mVars.velocity;
 		float turnAxis = this.inputManager.horizontalAxis.GetRawAxisInput() * turnStrength * -1;
 		float vertAxis = this.inputManager.verticalAxis.GetRawAxisInput ();
 
@@ -79,15 +82,20 @@ public class PlayerController : MonoBehaviour {
 		mVars.faceDir = transform.up;
 		mVars.faceAngle = transform.eulerAngles.z;
 
+		Vector3 newVelocity = mVars.velocity;
+
 		if (mVars.velocity == Vector3.zero) {
-			mVars.velocity = transform.up * currentSpeed * Time.deltaTime;
+			newVelocity = transform.up * currentSpeed * Time.deltaTime;
 			mVars.oldMovementAngle = transform.eulerAngles.z;
 		} else {
 			if (thrusting) {
-				mVars.velocity += transform.up * currentSpeed * Time.deltaTime;
+				newVelocity = transform.up * currentSpeed * Time.deltaTime;
 				mVars.oldMovementAngle = transform.eulerAngles.z;
 			}
 		}
+
+		mVars.velocity.x = Mathf.Lerp (mVars.velocity.x, newVelocity.x, 0.3f);
+		mVars.velocity.y = Mathf.Lerp (mVars.velocity.y, newVelocity.y, 0.3f);
 
 		// Clamp the vectors.
 
@@ -103,15 +111,21 @@ public class PlayerController : MonoBehaviour {
 		else if (mVars.velocity.y < -maxVelocity) {
 			mVars.velocity.y = -maxVelocity;
 		}
-
+//
+//		if (mVars.oldVelocity != mVars.velocity) {
+//			mVars.oldVelContainer += mVars.oldVelocity;
+////			Vector3 subtractVelocity = mVars.oldVelocity * 0.1f;
+//			transform.position -= mVars.oldVelocity;
+//		}
+			
 		transform.position += (mVars.velocity);
 	}
 
 	void Decelerate(float multiplier = 1) {
 		mVars.velocity *= 0.99f;
-		if (mVars.velocity.x < 0.0004f)
+		if (mVars.velocity.x < minVelocity)
 			mVars.velocity.x = 0;
-		if (mVars.velocity.y < 0.0004f)
+		if (mVars.velocity.y < minVelocity)
 			mVars.velocity.y = 0;
 	}
 
@@ -124,12 +138,14 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	struct MovementVars{
+		public Vector3 oldVelocity;
 		public Vector3 velocity;
 		public float oldMovementAngle;
 		public Vector3 faceDir;
 		public float faceAngle;
 
 		public void Reset() {
+			oldVelocity = Vector3.zero;
 			velocity = Vector3.zero;
 			faceDir = Vector3.zero;
 			oldMovementAngle = 0;
