@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour {
 	/// <summary>
 	/// The max velocity value for any of the x,y velocity values.
 	/// </summary>
-	public float maxVelocity = 0.05f;
+	public float maxVelocity = 0.1f;
 
 	/// <summary>
 	/// This value should be very small! Added to speed while
@@ -114,13 +114,14 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Decelerate(float multiplier = 1) {
-		if (currentSpeed - (acceleration * multiplier) >= 0) {
-			currentSpeed -= acceleration * multiplier;
-		} else if (currentSpeed - acceleration >= 0)
-			currentSpeed -= acceleration;
-		else {
-			currentSpeed = 0;
-		}
+//		if (currentSpeed - (acceleration * multiplier) >= 0) {
+//			currentSpeed -= acceleration * multiplier;
+//		} else if (currentSpeed - acceleration >= 0)
+//			currentSpeed -= acceleration;
+//		else {
+//			currentSpeed = 0;
+//		}
+		mVars.velocity *= 0.99f;
 	}
 
 	void Shoot() {
