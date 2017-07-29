@@ -4,8 +4,25 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+	/// <summary>
+	/// The max speed.
+	/// </summary>
 	public float maxSpeed = 20f;
+
+	/// <summary>
+	/// The max velocity value for any of the x,y velocity values.
+	/// </summary>
+	public float maxVelocity = 20f;
+
+	/// <summary>
+	/// This value should be very small! Added to speed while
+	/// input forward, until it reaches maxSpeed.
+	/// </summary>
 	public float acceleration = 0.2f;
+
+	/// <summary>
+	/// This is multiplied to the horizontal axis to rotate the ship.
+	/// </summary>
 	public float turnStrength = 2f;
 
 	float currentSpeed;
@@ -40,7 +57,8 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 		else if (vertAxis !=0) {
-			Decelerate (2);
+//			Debug.Log ("Braking!");
+			Decelerate (2); // Something is broken.
 		}
 
 		bool thrusting = (vertAxis > 0);
@@ -50,28 +68,43 @@ public class PlayerController : MonoBehaviour {
 		mVars.faceDir = transform.up;
 		mVars.faceAngle = transform.eulerAngles.z;
 
-		if (mVars.movementDir == Vector3.zero) {
-			mVars.movementDir = transform.up * currentSpeed * Time.deltaTime;
+		if (mVars.velocity == Vector3.zero) {
+			mVars.velocity = transform.up * currentSpeed * Time.deltaTime;
 			mVars.oldMovementAngle = transform.eulerAngles.z;
 		} else {
 			if (thrusting) {
-				if (mVars.oldMovementAngle != mVars.faceAngle) {
-					if (currentSpeed > 1f) Decelerate ();
-					if (currentSpeed < 1f) {
-						mVars.movementDir = transform.up * currentSpeed * Time.deltaTime;
-						mVars.oldMovementAngle = transform.eulerAngles.z;
-					}
-				} else {
-					mVars.movementDir = transform.up * currentSpeed * Time.deltaTime;
-					mVars.oldMovementAngle = transform.eulerAngles.z;
-				}
+//				if (mVars.oldMovementAngle != mVars.faceAngle && currentSpeed > 1f) {
+//					if (currentSpeed > 1f) Decelerate ();
+////					if (currentSpeed < 1f) {
+//						mVars.velocity = transform.up * currentSpeed * Time.deltaTime;
+//						mVars.oldMovementAngle = transform.eulerAngles.z;
+////					}
+//				} else {
+//					mVars.velocity = transform.up * currentSpeed * Time.deltaTime;
+//					mVars.oldMovementAngle = transform.eulerAngles.z;
+//				}
 
-			} else if (turnAxis != 0) {
-				Decelerate ();
+				mVars.velocity += transform.up * currentSpeed * Time.deltaTime;
+				mVars.oldMovementAngle = transform.eulerAngles.z;
 			}
 		}
 
-		transform.position += (mVars.movementDir);
+		// Clamp the vectors.
+
+		if (mVars.velocity.x > maxVelocity) {
+			mVars.velocity.x = maxVelocity;
+		}
+		else if (mVars.velocity.x < -maxVelocity) {
+			mVars.velocity.x = -maxVelocity;
+		}
+		if (mVars.velocity.y > maxVelocity) {
+			mVars.velocity.y = maxVelocity;
+		}
+		else if (mVars.velocity.y < -maxVelocity) {
+			mVars.velocity.y = -maxVelocity;
+		}
+
+		transform.position += (mVars.velocity);
 	}
 
 	void Decelerate(float multiplier = 1) {
@@ -89,13 +122,13 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	struct MovementVars{
-		public Vector3 movementDir;
+		public Vector3 velocity;
 		public float oldMovementAngle;
 		public Vector3 faceDir;
 		public float faceAngle;
 
 		public void Reset() {
-			movementDir = Vector3.zero;
+			velocity = Vector3.zero;
 			faceDir = Vector3.zero;
 			oldMovementAngle = 0;
 			faceAngle = 0;
