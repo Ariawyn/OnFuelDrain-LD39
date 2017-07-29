@@ -25,6 +25,11 @@ public class PlayerController : MonoBehaviour {
 	/// </summary>
 	public float turnStrength = 5f;
 
+	/// <summary>
+	/// The bullet gameObject
+	/// </summary>
+	public GameObject bulletGO;
+
 	public Vector3 debugCurrentVelocity;
 
 	float currentSpeed;
@@ -79,17 +84,6 @@ public class PlayerController : MonoBehaviour {
 			mVars.oldMovementAngle = transform.eulerAngles.z;
 		} else {
 			if (thrusting) {
-//				if (mVars.oldMovementAngle != mVars.faceAngle && currentSpeed > 1f) {
-//					if (currentSpeed > 1f) Decelerate ();
-////					if (currentSpeed < 1f) {
-//						mVars.velocity = transform.up * currentSpeed * Time.deltaTime;
-//						mVars.oldMovementAngle = transform.eulerAngles.z;
-////					}
-//				} else {
-//					mVars.velocity = transform.up * currentSpeed * Time.deltaTime;
-//					mVars.oldMovementAngle = transform.eulerAngles.z;
-//				}
-
 				mVars.velocity += transform.up * currentSpeed * Time.deltaTime;
 				mVars.oldMovementAngle = transform.eulerAngles.z;
 			}
@@ -114,18 +108,19 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Decelerate(float multiplier = 1) {
-//		if (currentSpeed - (acceleration * multiplier) >= 0) {
-//			currentSpeed -= acceleration * multiplier;
-//		} else if (currentSpeed - acceleration >= 0)
-//			currentSpeed -= acceleration;
-//		else {
-//			currentSpeed = 0;
-//		}
 		mVars.velocity *= 0.99f;
+		if (mVars.velocity.x < 0.0004f)
+			mVars.velocity.x = 0;
+		if (mVars.velocity.y < 0.0004f)
+			mVars.velocity.y = 0;
 	}
 
 	void Shoot() {
-		
+		if (inputManager.GetKeyDown ("Fire")) {
+			GameObject bullet = GameObject.Instantiate (bulletGO);
+			bullet.transform.position = transform.position;
+			bullet.transform.rotation = transform.rotation;
+		}
 	}
 
 	struct MovementVars{
