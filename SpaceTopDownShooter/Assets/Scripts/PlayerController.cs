@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour {
 	/// <summary>
 	/// The speed bullets will move at. NOT the fire rate.
 	/// </summary>
-	public float bulletSpeed = 0.5f;
+	public float bulletSpeed;
 
 	public Vector3 debugCurrentVelocity;
 
@@ -52,6 +52,8 @@ public class PlayerController : MonoBehaviour {
 		inputManager = Object.FindObjectOfType<InputManager> ();
 		audioManager = Object.FindObjectOfType<AudioManager>();
 		mVars.Reset ();
+		bulletSpeed = maxSpeed * 1.5f;
+		SimplePool.Preload (bulletGO, 20);
 	}
 
 	// Use this for initialization
@@ -164,9 +166,7 @@ public class PlayerController : MonoBehaviour {
 		while(isRunningShootingCoroutine) {
 			if (inputManager.GetKey ("Fire")) {
 				this.audioManager.Play("Fire!");
-				GameObject bullet = GameObject.Instantiate (bulletGO);
-				bullet.transform.position = transform.position;
-				bullet.transform.rotation = transform.rotation;
+				GameObject bullet = SimplePool.Spawn (bulletGO,transform.position,transform.rotation);
 				bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
 				yield return new WaitForSeconds(secondsBetweenBulletFire);
 			} else {
@@ -177,18 +177,10 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	struct MovementVars{
-		public Vector3 oldVelocity;
 		public Vector3 moveAmount;
-		public float oldMovementAngle;
-		public Vector3 faceDir;
-		public float faceAngle;
 
 		public void Reset() {
-			oldVelocity = Vector3.zero;
 			moveAmount = Vector3.zero;
-			faceDir = Vector3.zero;
-			oldMovementAngle = 0;
-			faceAngle = 0;
 		}
 	}
 }

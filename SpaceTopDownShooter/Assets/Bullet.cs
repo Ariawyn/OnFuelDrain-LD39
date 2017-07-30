@@ -11,7 +11,7 @@ public class Bullet : MonoBehaviour {
 	void FixedUpdate () {
 		destroyTimer -= Time.deltaTime;
 		if (destroyTimer <= 0) {
-			Destroy (this.gameObject);
+			SimplePool.Despawn (this.gameObject);
 		}
 		transform.position += transform.up * moveSpeed * Time.fixedDeltaTime;
 	}
