@@ -91,6 +91,25 @@ public class CharacterMotor : MonoBehaviour {
 //
 //	}
 
+	public void Move(Transform target, float distanceOffset, float speed) {
+		Vector2 direction = target.position - this.transform.position;
+		float magnitude = direction.magnitude;
+		direction.Normalize();
+
+		Vector2 velocity = direction * speed;
+
+		if(Mathf.RoundToInt(magnitude) >= distanceOffset) {
+			Debug.Log("Not in range"  + magnitude + " " + distanceOffset);
+			this.body.velocity = velocity;
+		} else {
+			Debug.Log("In range: " + magnitude + " " + distanceOffset);
+			this.body.velocity = Vector2.Lerp(this.body.velocity, Vector2.zero, speed);
+		}
+
+		float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+		this.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);;
+	}
+
 	public void Move(float vertInput, float HorizInput) {
 		float turnAmount = HorizInput * turnStrength * -1;
 //		transform.Rotate (new Vector3 (0, 0, turnAmount));
