@@ -54,6 +54,9 @@ public class InputManager : MonoBehaviour {
 			// Interaction keys:
 			this.controls["Fire"] = KeyCode.Space;
 
+			// Game stuff keys:
+			this.controls["Pause"] = KeyCode.Escape;
+
 			// Set the axis inputs
 			this.horizontalAxis.setPositiveKey(this.controls["Right"]);
 			this.horizontalAxis.setNegativeKey(this.controls["Left"]);

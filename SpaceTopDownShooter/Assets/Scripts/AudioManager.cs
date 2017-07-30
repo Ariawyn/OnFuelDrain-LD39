@@ -10,6 +10,9 @@ public class AudioManager : MonoBehaviour {
 	// This is initialized in a function, not through inspector
 	Dictionary<string, Sound> library;
 
+	// Instance of current BGM sound
+	private Sound currentBGM;
+
 	// Volume and pitch values
 	private float musicVolume = 1f;
 	private float effectsVolume = 1f;
@@ -23,12 +26,13 @@ public class AudioManager : MonoBehaviour {
 
 	void Start() {
 		this.Play("Theme");
+		this.currentBGM = this.library["Theme"];
 	}
 
 	public void Play(string name) {
 		if(this.library.ContainsKey(name)) {
 			Sound s = this.library[name];
-			
+
 			// Check if the sound is SFX or BGM
 			if(s.isSFX) {
 				// Randomize the effects volume and pitch by their random values
@@ -47,6 +51,18 @@ public class AudioManager : MonoBehaviour {
 
 		// If we get to this point, then we have no sound file for the given name
 		Debug.Log("No sound file found for name: " + name);
+	}
+
+	public void PauseBGM() {
+		if(this.currentBGM.source.isPlaying) {
+			this.currentBGM.source.Pause();
+		}
+	}
+
+	public void UnpauseBGM() {
+		if(!this.currentBGM.source.isPlaying) {
+			this.currentBGM.source.Play();
+		}
 	}
 
 	public void setMusicVolume(float volume) {
@@ -94,7 +110,7 @@ public class AudioManager : MonoBehaviour {
 		this.library = new Dictionary<string, Sound>();
 
 		// Add all sound instances into dictionary
-		foreach(Sound s in sounds) {
+		foreach(Sound s in this.sounds) {
 			// Add sound to library
 			this.library[s.name] = s;
 
