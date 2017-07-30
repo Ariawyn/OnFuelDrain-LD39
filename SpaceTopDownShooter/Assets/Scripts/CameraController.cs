@@ -50,12 +50,15 @@ public class CameraController : MonoBehaviour {
 		this.focusArea = new FocusArea(this.targetBounds, focusAreaSize);
 	}
 	
-	void FixedUpdate() {
+	void Update() {
 		// Update bounds position
 		this.targetBounds.center = this.target.position;
 
 		// Update focusArea
 		this.focusArea.Update(this.targetBounds);
+	}
+
+	void FixedUpdate() {
 
 		// TODO: Check if the player stops while we are trying to change the look ahead values
 		// In that case we do not want to continue moving the lookahead focus position forward
