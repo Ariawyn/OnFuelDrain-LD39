@@ -65,82 +65,99 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		debugCurrentVelocity = mVars.velocity;
+		debugCurrentVelocity = mVars.moveAmount;
 		
 		Move ();
 
 		//Shoot ();
 	}
 
+//	void Move() {
+//		mVars.oldVelocity = mVars.velocity;
+//		float turnAxis = this.inputManager.horizontalAxis.GetRawAxisInput() * turnStrength * -1;
+//		float vertAxis = this.inputManager.verticalAxis.GetRawAxisInput ();
+//
+//		if (vertAxis > 0) {
+//			if (currentSpeed + acceleration < maxSpeed) {
+//				currentSpeed += acceleration;
+//			} else if (currentSpeed > maxSpeed) {
+//				currentSpeed = maxSpeed;
+//			}
+//		}
+//		else if (vertAxis !=0) {
+////			Debug.Log ("Braking!");
+//			Decelerate (2); // Something is broken.
+//		}
+//
+//		bool thrusting = (vertAxis > 0);
+//
+//		Vector3 newVelocity = mVars.oldVelocity;
+//
+////		if (turnAxis != 0) {
+////			newVelocity = transform.up * currentSpeed * Time.deltaTime;
+////		} 
+//
+//		transform.Rotate (new Vector3 (0, 0, turnAxis));
+//
+//		mVars.faceDir = transform.up;
+//		mVars.faceAngle = transform.eulerAngles.z;
+//
+//
+//		if (mVars.velocity == Vector3.zero || thrusting) {
+//
+//			newVelocity = transform.up * currentSpeed * Time.deltaTime;
+//			mVars.oldMovementAngle = transform.eulerAngles.z;
+//
+//		}
+//
+//		Debug.Log ("OldVelocity: " + mVars.oldVelocity.ToString("F5"));
+//		Debug.Log ("NewVelocity: " + newVelocity.ToString("F5"));
+//		Debug.Log ("Velocity: " + mVars.velocity.ToString("F5"));
+//
+//		mVars.velocity += newVelocity;
+//		mVars.velocity.Normalize ();
+//			
+//		transform.position += (mVars.velocity);
+//	}
+
 	void Move() {
-		mVars.oldVelocity = mVars.velocity;
 		float turnAxis = this.inputManager.horizontalAxis.GetRawAxisInput() * turnStrength * -1;
 		float vertAxis = this.inputManager.verticalAxis.GetRawAxisInput ();
 
+		transform.Rotate (new Vector3 (0, 0, turnAxis));
+
+		Vector3 targetAngle = transform.up.normalized;
+		Vector3 currentAngle = mVars.moveAmount.normalized;
+
+		bool thrusting = false;
 		if (vertAxis > 0) {
 			if (currentSpeed + acceleration < maxSpeed) {
 				currentSpeed += acceleration;
 			} else if (currentSpeed > maxSpeed) {
 				currentSpeed = maxSpeed;
 			}
-		}
-		else if (vertAxis !=0) {
-//			Debug.Log ("Braking!");
-			Decelerate (2); // Something is broken.
-		}
-
-		bool thrusting = (vertAxis > 0);
-
-		transform.Rotate (new Vector3 (0, 0, turnAxis));
-
-		mVars.faceDir = transform.up;
-		mVars.faceAngle = transform.eulerAngles.z;
-
-		Vector3 newVelocity = mVars.velocity;
-
-		if (mVars.velocity == Vector3.zero) {
-			newVelocity = transform.up * currentSpeed * Time.deltaTime;
-			mVars.oldMovementAngle = transform.eulerAngles.z;
-		} else {
-			if (thrusting) {
-				newVelocity = transform.up * currentSpeed * Time.deltaTime;
-				mVars.oldMovementAngle = transform.eulerAngles.z;
-			}
+			thrusting = true;
+		} else if (vertAxis < 0) {
+			Decelerate (2);
 		}
 
-		mVars.velocity.x = Mathf.Lerp (mVars.velocity.x, newVelocity.x, 0.3f);
-		mVars.velocity.y = Mathf.Lerp (mVars.velocity.y, newVelocity.y, 0.3f);
 
-		// Clamp the vectors.
 
-		if (mVars.velocity.x > maxVelocity) {
-			mVars.velocity.x = maxVelocity;
-		}
-		else if (mVars.velocity.x < -maxVelocity) {
-			mVars.velocity.x = -maxVelocity;
-		}
-		if (mVars.velocity.y > maxVelocity) {
-			mVars.velocity.y = maxVelocity;
-		}
-		else if (mVars.velocity.y < -maxVelocity) {
-			mVars.velocity.y = -maxVelocity;
-		}
-//
-//		if (mVars.oldVelocity != mVars.velocity) {
-//			mVars.oldVelContainer += mVars.oldVelocity;
-////			Vector3 subtractVelocity = mVars.oldVelocity * 0.1f;
-//			transform.position -= mVars.oldVelocity;
-//		}
-			
-		transform.position += (mVars.velocity);
+		Vector3 moveAmountNew = (thrusting)? targetAngle : Vector3.zero ;
+
+		mVars.moveAmount += moveAmountNew;
+
+		if (currentSpeed == 0 || (Mathf.Abs (mVars.moveAmount.x) < 0.01f && Mathf.Abs (mVars.moveAmount.y) < 0.01f))
+			mVars.Reset ();
+
+		transform.position = Vector3.MoveTowards (transform.position, mVars.moveAmount, currentSpeed * Time.fixedDeltaTime);
+
 	}
 
 	void Decelerate(float multiplier = 1) {
-		mVars.velocity *= 0.99f;
-		if (mVars.velocity.x < minVelocity)
-			mVars.velocity.x = 0;
-		if (mVars.velocity.y < minVelocity)
-			mVars.velocity.y = 0;
+		currentSpeed -= acceleration * multiplier;
+		if (currentSpeed < 0)
+			currentSpeed = 0;
 	}
 
 	IEnumerator Shoot() {
@@ -161,14 +178,14 @@ public class PlayerController : MonoBehaviour {
 
 	struct MovementVars{
 		public Vector3 oldVelocity;
-		public Vector3 velocity;
+		public Vector3 moveAmount;
 		public float oldMovementAngle;
 		public Vector3 faceDir;
 		public float faceAngle;
 
 		public void Reset() {
 			oldVelocity = Vector3.zero;
-			velocity = Vector3.zero;
+			moveAmount = Vector3.zero;
 			faceDir = Vector3.zero;
 			oldMovementAngle = 0;
 			faceAngle = 0;
