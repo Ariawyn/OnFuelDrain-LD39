@@ -34,7 +34,7 @@ public class CharacterMotor : MonoBehaviour {
 
 	public Vector3 debugCurrentVelocity;
 
-	float currentSpeed;
+	public float currentSpeed;
 
 	Rigidbody2D body;
 

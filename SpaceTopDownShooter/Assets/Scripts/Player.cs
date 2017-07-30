@@ -16,6 +16,10 @@ public class Player : MonoBehaviour {
 
 	public float health = 1000f;
 
+	public delegate void PlayerTookDamageEvent (float hp);
+
+	public event PlayerTookDamageEvent OnPlayerTookDamage;
+
 	[Range(0,Mathf.Infinity)]
 	public float fuel = 1000f;
 
@@ -49,6 +53,7 @@ public class Player : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
+		bulletSpeed = (motor.currentSpeed > motor.maxSpeed) ? motor.currentSpeed : motor.maxSpeed;
 		float hInput = this.inputManager.horizontalAxis.GetRawAxisInput ();
 		float vInput = this.inputManager.verticalAxis.GetRawAxisInput ();
 		ReduceFuel (fuelLossRate);
@@ -66,6 +71,9 @@ public class Player : MonoBehaviour {
 		Debug.Log ("Ouch! " + damage);
 		health -= damage;
 		fuel += damage;
+
+		if (OnPlayerTookDamage != null)
+			OnPlayerTookDamage(health);
 	}
 
 	void ReduceFuel(float fuelLoss) {
