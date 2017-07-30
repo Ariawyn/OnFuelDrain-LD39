@@ -8,6 +8,10 @@ public class Bullet : MonoBehaviour {
 
 	public float destroyTimer = 5;
 
+	public bool hurtsPlayer = false;
+
+	public float damage = 5;
+
 	void FixedUpdate () {
 		destroyTimer -= Time.deltaTime;
 		if (destroyTimer <= 0) {
@@ -18,5 +22,16 @@ public class Bullet : MonoBehaviour {
 
 	public void SetBulletSpeed(float f){
 		moveSpeed = f;
+	}
+
+	void OnColliderEnter2D(Collider2D other) {
+		if (other.tag == "Player"){
+			if (hurtsPlayer){
+				other.GetComponent<Player> ().TakeDamage (damage);
+			}
+		}
+		else {
+			
+		}
 	}
 }

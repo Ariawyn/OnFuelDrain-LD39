@@ -14,6 +14,13 @@ public class Player : MonoBehaviour {
 	/// </summary>
 	public float bulletSpeed;
 
+	public float health = 1000f;
+
+	[Range(0,Mathf.Infinity)]
+	public float fuel = 1000f;
+
+	public float fuelLossRate = 1f;
+
 	CharacterMotor motor;
 
 	private InputManager inputManager;
@@ -40,7 +47,25 @@ public class Player : MonoBehaviour {
 	void FixedUpdate() {
 		float hInput = this.inputManager.horizontalAxis.GetRawAxisInput ();
 		float vInput = this.inputManager.verticalAxis.GetRawAxisInput ();
+		ReduceFuel (fuelLossRate);
+		if (fuel % 5 == 0)
+			Debug.Log ("Fuel: " + fuel);
+
+		if (fuel <= 0) {
+			hInput = 0;
+			vInput = 0;
+		}
 		motor.Move (vInput, hInput);
+	}
+
+	public void TakeDamage(float damage) {
+		Debug.Log ("Ouch! " + damage);
+		health -= damage;
+		fuel += damage;
+	}
+
+	void ReduceFuel(float fuelLoss) {
+		fuel -= fuelLoss;
 	}
 
 	IEnumerator Shoot() {
@@ -55,5 +80,17 @@ public class Player : MonoBehaviour {
 			}
 		}
 		yield return null;
+	}
+
+	void OnCollisionEnter2D(Collision2D other) {
+		if (other.gameObject.tag == "Bullet"){
+			Bullet b = other.gameObject.GetComponent<Bullet> ();
+			if (b.hurtsPlayer) {
+				TakeDamage (b.damage);
+			}
+		}
+		else {
+
+		}
 	}
 }

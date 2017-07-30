@@ -43,10 +43,6 @@ public class CharacterMotor : MonoBehaviour {
 	 * END MOVEMENT VARIABLES
 	 */
 
-	public float health = 1000f;
-
-	public float fuel = 1000f;
-
 	void Awake() {
 		mVars.Reset ();
 		debugCurrentVelocity = mVars.moveAmount;
