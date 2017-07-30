@@ -23,7 +23,12 @@ public class Player : MonoBehaviour {
 	[Range(0,Mathf.Infinity)]
 	public float fuel = 1000f;
 
+	public float maxFuel;
+
 	public float fuelLossRate = 1f;
+
+	public delegate void PlayerFuelIncreasedEvent (float f);
+	public event PlayerFuelIncreasedEvent OnPlayerFuelIncreased;
 
 	CharacterMotor motor;
 
@@ -43,6 +48,7 @@ public class Player : MonoBehaviour {
 		audioManager = Object.FindObjectOfType<AudioManager>();
 		motor = GetComponent<CharacterMotor> ();
 		SimplePool.Preload (bulletGO, 20);
+		maxFuel = fuel;
 	}
 
 	void Start () {
@@ -70,10 +76,17 @@ public class Player : MonoBehaviour {
 	public void TakeDamage(float damage) {
 		Debug.Log ("Ouch! " + damage);
 		health -= damage;
-		fuel += damage;
+
+		if (fuel + damage < maxFuel)
+			fuel += damage;
+		else
+			fuel = maxFuel;
 
 		if (OnPlayerTookDamage != null)
 			OnPlayerTookDamage(health);
+
+		if (OnPlayerFuelIncreased != null)
+			OnPlayerFuelIncreased (fuel);
 	}
 
 	void ReduceFuel(float fuelLoss) {
