@@ -16,10 +16,19 @@ public class GameManager : MonoBehaviour {
 
 	// Cache the player to receive score update
 	Player player;
+	bool playerFound = false;
 
 	// Event system for updating the score in GUI.
 	public delegate void ScoreUpdatedEvent(int score);
 	public event ScoreUpdatedEvent OnScoreUpdated;
+
+	// Timer variable for enemy spawns
+	private float gameTimer;
+	private bool timerIsCounting;
+
+	// Enemy prefab objects
+	public GameObject basicEnemyPrefab;
+	public GameObject bossEnemyPrefab;
 
 	// Use this for initialization
 	void Start () {
@@ -37,14 +46,32 @@ public class GameManager : MonoBehaviour {
 		this.audioManager = Object.FindObjectOfType<AudioManager>();
 
 		// Get player
-		player = FindObjectOfType<Player>();
-		player.OnPlayerTookDamage += UpdateScore;
+		this.player = FindObjectOfType<Player>();
+		//this.player.OnPlayerTookDamage += UpdateScore;
+
+		// Initialise timer variablse
+		this.gameTimer = 0.0f;
+		this.timerIsCounting = false;
 
 		// TODO: Maybe dont do this when we get the main menu done
 		this.Play();
 	}
 
 	void Update() {
+		// Attempt to locate player object and add UpdateScore to OnPlayerTookDamage
+		if(!this.playerFound) {
+			this.player = FindObjectOfType<Player>();
+			if(this.player) {
+				this.player.OnPlayerTookDamage += UpdateScore;
+				this.playerFound = true;
+			}
+		}
+
+		if(this.state == GAME_STATE.RUNNING && this.timerIsCounting) {
+			this.gameTimer += Time.deltaTime;
+			Debug.Log(this.gameTimer);
+		}
+
 		// Check if game is paused, this should only occur if the game is in the running or paused state, not menu or finished
 		if(this.state == GAME_STATE.RUNNING || this.state == GAME_STATE.PAUSED) {
 			// If the pause key is pressed
@@ -65,6 +92,9 @@ public class GameManager : MonoBehaviour {
 		this.state = GAME_STATE.RUNNING;
 		// TODO: Switch scene from main_menu to game scene
 		// TODO: Start the enemy spawners and score counting
+
+		// Start counting timer
+		this.timerIsCounting = true;
 	}
 
 	// Function to be called when esc is pressed in game
@@ -74,6 +104,9 @@ public class GameManager : MonoBehaviour {
 
 		// Pause game
 		Time.timeScale = 0;
+
+		// Set timer to not be counting
+		this.timerIsCounting = false;
 
 		// Pause the BGM in audio manager
 		this.audioManager.PauseBGM();
@@ -88,6 +121,9 @@ public class GameManager : MonoBehaviour {
 
 		// Unpause game
 		Time.timeScale = 1;
+
+		// Set timer to counting
+		this.timerIsCounting = true;
 
 		// Unpause the BGM in audio manager
 		this.audioManager.UnpauseBGM();
