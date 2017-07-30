@@ -30,6 +30,10 @@ public class Player : MonoBehaviour {
 	private float secondsBetweenBulletFire = 0.25f;
 	private bool isRunningShootingCoroutine = true;
 
+	public Transform[] gunTransforms;
+	public bool alternateGuns = true;
+	int gIndex = 0;
+
 	void Awake() {
 		inputManager = Object.FindObjectOfType<InputManager> ();
 		audioManager = Object.FindObjectOfType<AudioManager>();
@@ -72,25 +76,25 @@ public class Player : MonoBehaviour {
 		while(isRunningShootingCoroutine) {
 			if (inputManager.GetKey ("Fire")) {
 				this.audioManager.Play("Fire!");
-				GameObject bullet = GameObject.Instantiate (bulletGO,transform.position,transform.rotation);
-				bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
+				if (alternateGuns) {
+					if (gIndex > gunTransforms.Length - 1 || gIndex == null)
+						gIndex = 0;
+//					GameObject bullet = GameObject.Instantiate (bulletGO, gunTransforms[gIndex].position, transform.rotation);
+					GameObject bullet = SimplePool.Spawn(bulletGO,gunTransforms[gIndex].position,transform.rotation);
+					bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
+					gIndex+=1;
+				} else {
+					foreach (Transform t in gunTransforms) {
+//						GameObject bullet = GameObject.Instantiate (bulletGO, t.position, transform.rotation);
+						GameObject bullet = SimplePool.Spawn(bulletGO,t.position,transform.rotation);
+						bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
+					}
+				}
 				yield return new WaitForSeconds(secondsBetweenBulletFire);
 			} else {
 				yield return null;
 			}
 		}
 		yield return null;
-	}
-
-	void OnCollisionEnter2D(Collision2D other) {
-		if (other.gameObject.tag == "Bullet"){
-			Bullet b = other.gameObject.GetComponent<Bullet> ();
-			if (b.hurtsPlayer) {
-				TakeDamage (b.damage);
-			}
-		}
-		else {
-
-		}
 	}
 }
