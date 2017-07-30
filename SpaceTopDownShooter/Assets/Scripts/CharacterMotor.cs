@@ -96,17 +96,20 @@ public class CharacterMotor : MonoBehaviour {
 //		transform.Rotate (new Vector3 (0, 0, turnAmount));
 		body.rotation = body.rotation + turnAmount;
 
+		bool thrusting = false;
 		if (vertInput > 0) {
 			if (currentSpeed + acceleration < maxSpeed) {
 				currentSpeed += acceleration;
 			} else if (currentSpeed > maxSpeed) {
 				currentSpeed = maxSpeed;
 			}
+			thrusting = true;
 		} else if (vertInput < 0) {
 			Decelerate (mVars.moveAmount);
 		}
 		mVars.oldMoveAmount = mVars.moveAmount;
-		mVars.moveAmount = transform.up * currentSpeed * Time.fixedDeltaTime;
+		if (thrusting)
+			mVars.moveAmount = transform.up * currentSpeed * Time.fixedDeltaTime;
 //		body.position += mVars.moveAmount;
 		if (mVars.oldMoveAmount != mVars.moveAmount) {
 			Decelerate (mVars.oldMoveAmount,4);
