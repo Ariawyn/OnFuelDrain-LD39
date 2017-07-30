@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour {
 
 	// GameObject instance of target, in this case the player
-	public GameObject target;
+	public Transform target;
 
 	// GameObject prefab for bullet
 	public GameObject bullet;
@@ -14,22 +14,38 @@ public class Enemy : MonoBehaviour {
 	private CharacterMotor motor;
 
 	private float shootDistanceThreshold;
-	private float distanceToTargetOffset;
+	private float minDistance;
+	private float maxDistance;
+	private bool inRange;
 
 	private float speed;
 
 	// Use this for initialization
 	void Start () {
-		this.shootDistanceThreshold = 10f;
-		this.distanceToTargetOffset = 4f;
+		this.maxDistance = this.shootDistanceThreshold = 8f;
+		this.minDistance = 4f;
 
-		this.speed = 10f;
+		this.inRange = false;
+
+		this.speed = 5f;
 
 		this.motor = GetComponent<CharacterMotor>();
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
-		this.motor.Move(this.target.transform, this.distanceToTargetOffset, this.speed);
+	//void FixedUpdate () {
+		//this.motor.Move(this.target.transform, this.distanceToTargetOffset, this.speed);
+		/*Vector2 direction = this.target.transform.position - this.transform.position;
+		float magnitude = direction.magnitude;
+		direction.Normalize();
+		this.motor.Move(direction.x, direction.y);*/
+	//}*/
+
+	void LateUpdate() {
+		if(!target) {
+			return;
+		}
+
+		this.motor.Move(this.target, this.minDistance, this.maxDistance, this.speed, ref this.inRange);
 	}
 }

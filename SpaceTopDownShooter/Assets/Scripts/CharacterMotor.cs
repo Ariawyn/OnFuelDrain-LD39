@@ -91,21 +91,42 @@ public class CharacterMotor : MonoBehaviour {
 //
 //	}
 
-	public void Move(Transform target, float distanceOffset, float speed) {
+	public void Move(Transform target, float minDistance, float maxDistance, float speed, ref bool inRange) {
+		// Get direction vector between target and this
 		Vector2 direction = target.position - this.transform.position;
+		// Get magnitude for distance
 		float magnitude = direction.magnitude;
+		// Normalized direction
 		direction.Normalize();
 
+		// Calculate velocity
 		Vector2 velocity = direction * speed;
 
-		if(Mathf.RoundToInt(magnitude) >= distanceOffset) {
-			Debug.Log("Not in range"  + magnitude + " " + distanceOffset);
-			this.body.velocity = velocity;
+		// Check if we were already in range
+		if(inRange) {
+			// If we were in range, but now the magnitude is greater than max distance
+			if(magnitude >= maxDistance) {
+				// We are no longer in range
+				inRange = false;
+
+				// Move the player
+				this.body.velocity = velocity;
+			}
 		} else {
-			Debug.Log("In range: " + magnitude + " " + distanceOffset);
-			this.body.velocity = Vector2.Lerp(this.body.velocity, Vector2.zero, speed);
+			// We were not in range
+			if(magnitude <= minDistance) {
+				// Set that we are in range now
+				inRange = true;
+
+				// Slowly go to halt
+				this.body.velocity = Vector2.Lerp(this.body.velocity, Vector2.zero, speed);
+			} else {
+				// We are not set to be in range right now
+				this.body.velocity = velocity;
+			}
 		}
 
+		// Rotate to look at target
 		float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 		this.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);;
 	}
