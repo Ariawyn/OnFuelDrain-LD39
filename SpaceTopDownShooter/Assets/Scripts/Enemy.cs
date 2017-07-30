@@ -13,6 +13,9 @@ public class Enemy : MonoBehaviour {
 	// CharacterMotor instance
 	private CharacterMotor motor;
 
+	// Health
+	public float health = 20f;
+
 	private float shootDistanceThreshold;
 	private float minDistance;
 	private float maxDistance;
@@ -41,11 +44,22 @@ public class Enemy : MonoBehaviour {
 		this.motor.Move(direction.x, direction.y);*/
 	//}*/
 
+	void Update() {
+		if (health <= 0) {
+			Destroy (this.gameObject);
+		}
+	}
+
 	void LateUpdate() {
 		if(!target) {
 			return;
 		}
 
 		this.motor.Move(this.target, this.minDistance, this.maxDistance, this.speed, ref this.inRange);
+	}
+
+	public void TakeDamage(float damage) {
+//		Debug.Log ("Yass you got the bad guy");
+		health -= damage;
 	}
 }

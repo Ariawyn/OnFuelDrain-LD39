@@ -12,7 +12,7 @@ public class Player : MonoBehaviour {
 	/// <summary>
 	/// The speed bullets will move at. NOT the fire rate.
 	/// </summary>
-	public float bulletSpeed;
+	public float bulletSpeed = 30f;
 
 	public float health = 1000f;
 
@@ -59,7 +59,7 @@ public class Player : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		bulletSpeed = (motor.currentSpeed > motor.maxSpeed) ? motor.currentSpeed : motor.maxSpeed;
+//		bulletSpeed = (motor.currentSpeed > motor.maxSpeed) ? motor.currentSpeed : motor.maxSpeed;
 		float hInput = this.inputManager.horizontalAxis.GetRawAxisInput ();
 		float vInput = this.inputManager.verticalAxis.GetRawAxisInput ();
 		ReduceFuel (fuelLossRate);
@@ -103,12 +103,14 @@ public class Player : MonoBehaviour {
 					GameObject bullet = GameObject.Instantiate (bulletGO, gunTransforms[gIndex].position, transform.rotation);
 //					GameObject bullet = SimplePool.Spawn(bulletGO,gunTransforms[gIndex].position,transform.rotation);
 					bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
+					bullet.GetComponent<Bullet> ().hurtsPlayer = false;
 					gIndex+=1;
 				} else {
 					foreach (Transform t in gunTransforms) {
 						GameObject bullet = GameObject.Instantiate (bulletGO, t.position, transform.rotation);
 //						GameObject bullet = SimplePool.Spawn(bulletGO,t.position,transform.rotation);
 						bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
+						bullet.GetComponent<Bullet> ().hurtsPlayer = false;
 					}
 				}
 				yield return new WaitForSeconds(secondsBetweenBulletFire);
