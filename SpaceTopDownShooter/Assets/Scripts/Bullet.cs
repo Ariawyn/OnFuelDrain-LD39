@@ -26,10 +26,10 @@ public class Bullet : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
-		if (other.gameObject.tag == "Bullet"){
-			Bullet b = other.gameObject.GetComponent<Bullet> ();
-			if (b.hurtsPlayer) {
-				other.SendMessage("TakeDamage", b.damage);
+		if (other.gameObject.tag == "Player"){
+			Player p = other.gameObject.GetComponent<Player> ();
+			if (this.hurtsPlayer) {
+				other.gameObject.SendMessage("TakeDamage", this.damage);
 			}
 		}
 		else {

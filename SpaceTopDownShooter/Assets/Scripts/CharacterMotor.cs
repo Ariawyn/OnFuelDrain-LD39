@@ -127,7 +127,7 @@ public class CharacterMotor : MonoBehaviour {
 //		currentSpeed -= acceleration * multiplier;
 //		if (currentSpeed < 0)
 //			currentSpeed = 0;
-		body.AddForce(-mVars.moveAmount * multiplier);
+		body.AddForce(-mVars.moveAmount * multiplier, ForceMode2D.Force);
 	}
 
 	struct MovementVars{
