@@ -7,11 +7,19 @@ public class GameManager : MonoBehaviour {
 
 	// Score based variables
 	private int score;
+	public int Score { get { return score; }}
 	private int highscore;
 
 	// Behaviour manager instances
 	private InputManager inputManager;
 	private AudioManager audioManager;
+
+	// Cache the player to receive score update
+	Player player;
+
+	// Event system for updating the score in GUI.
+	public delegate void ScoreUpdatedEvent(int score);
+	public event ScoreUpdatedEvent OnScoreUpdated;
 
 	// Use this for initialization
 	void Start () {
@@ -27,6 +35,10 @@ public class GameManager : MonoBehaviour {
 
 		// Get instance of audio manager
 		this.audioManager = Object.FindObjectOfType<AudioManager>();
+
+		// Get player
+		player = FindObjectOfType<Player>();
+		player.OnPlayerTookDamage += UpdateScore;
 
 		// TODO: Maybe dont do this when we get the main menu done
 		this.Play();
@@ -97,11 +109,13 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	public void UpdateScore(int pointsToAdd) {
+	public void UpdateScore(float pointsToAdd) {
 		// Add points to score
-		this.score += pointsToAdd;
+		int roundedPoints = Mathf.RoundToInt(pointsToAdd);
+		this.score += roundedPoints;
 
-		// TODO: Update UI score maybe??? Notify ui manager
+		// Notify ui manager
+		OnScoreUpdated(roundedPoints);
 	}
 
 	private void LoadHighScore() {

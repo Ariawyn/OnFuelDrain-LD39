@@ -83,7 +83,7 @@ public class Player : MonoBehaviour {
 			fuel = maxFuel;
 
 		if (OnPlayerTookDamage != null)
-			OnPlayerTookDamage(health);
+			OnPlayerTookDamage(damage);
 
 		if (OnPlayerFuelIncreased != null)
 			OnPlayerFuelIncreased (fuel);

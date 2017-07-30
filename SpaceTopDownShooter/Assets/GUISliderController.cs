@@ -25,9 +25,9 @@ public class GUISliderController : MonoBehaviour {
 			s.maxValue = p.health;
 	}
 	
-	void HandlePlayerTookDamage(float hp) {
+	void HandlePlayerTookDamage(float damage) {
 		if (!isFuel)
-			s.value = hp;
+			s.value -= damage;
 	}
 
 	void Update() {
