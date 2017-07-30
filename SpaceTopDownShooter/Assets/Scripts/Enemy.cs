@@ -13,8 +13,11 @@ public class Enemy : MonoBehaviour {
 	// CharacterMotor instance
 	private CharacterMotor motor;
 
+	// Game manager instance, used for updating score
+	private GameManager gameManager;
+
 	// Health
-	public float health = 20f;
+	public float health = 10f;
 
 	private float shootDistanceThreshold;
 	private float minDistance;
@@ -23,6 +26,12 @@ public class Enemy : MonoBehaviour {
 
 	private float speed;
 
+	private int worth;
+
+	void Awake() {
+		this.gameManager = Object.FindObjectOfType<GameManager>();
+	}
+
 	// Use this for initialization
 	void Start () {
 		this.maxDistance = this.shootDistanceThreshold = 8f;
@@ -30,23 +39,17 @@ public class Enemy : MonoBehaviour {
 
 		this.inRange = false;
 
+		this.worth = 5;
+
 		this.speed = 5f;
 
 		this.motor = GetComponent<CharacterMotor>();
 	}
-	
-	// Update is called once per frame
-	//void FixedUpdate () {
-		//this.motor.Move(this.target.transform, this.distanceToTargetOffset, this.speed);
-		/*Vector2 direction = this.target.transform.position - this.transform.position;
-		float magnitude = direction.magnitude;
-		direction.Normalize();
-		this.motor.Move(direction.x, direction.y);*/
-	//}*/
 
 	void Update() {
 		if (health <= 0) {
 			Destroy (this.gameObject);
+			this.gameManager.UpdateScore(this.worth);
 		}
 	}
 

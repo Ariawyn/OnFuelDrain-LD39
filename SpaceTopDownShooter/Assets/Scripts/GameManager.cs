@@ -193,14 +193,15 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void SpawnBasicEnemies(int amount) {
-		Debug.Log("Spawning " + amount + " basic enemies");
-
+		// Loop through amount
 		for(int i = 0; i < amount; i++) {
 			// Get random radian angle
 			float radian = Random.Range(0f, Mathf.PI*2);
+			
 			// Calculate x and y pos of angle
 			float xPos = Mathf.Cos(radian);
 			float yPos = Mathf.Sin(radian);
+
 			// Calculate spawn point from spawn offset distance and the player position
 			Vector3 spawnPoint = new Vector3(xPos, yPos, 0) * this.spawnOffsetDistance;
 			spawnPoint = this.player.transform.position + spawnPoint;
