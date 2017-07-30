@@ -36,6 +36,8 @@ public class CharacterMotor : MonoBehaviour {
 
 	float currentSpeed;
 
+	Rigidbody2D body;
+
 	MovementVars mVars;
 
 	/**
@@ -46,6 +48,7 @@ public class CharacterMotor : MonoBehaviour {
 	void Awake() {
 		mVars.Reset ();
 		debugCurrentVelocity = mVars.moveAmount;
+		body = GetComponent<Rigidbody2D> ();
 	}
 
 	// Use this for initialization
@@ -90,7 +93,8 @@ public class CharacterMotor : MonoBehaviour {
 
 	public void Move(float vertInput, float HorizInput) {
 		float turnAmount = HorizInput * turnStrength * -1;
-		transform.Rotate (new Vector3 (0, 0, turnAmount));
+//		transform.Rotate (new Vector3 (0, 0, turnAmount));
+		body.rotation = body.rotation + turnAmount;
 
 		if (vertInput > 0) {
 			if (currentSpeed + acceleration < maxSpeed) {
@@ -99,24 +103,37 @@ public class CharacterMotor : MonoBehaviour {
 				currentSpeed = maxSpeed;
 			}
 		} else if (vertInput < 0) {
-			Decelerate ();
+			Decelerate (mVars.moveAmount);
 		}
-
+		mVars.oldMoveAmount = mVars.moveAmount;
 		mVars.moveAmount = transform.up * currentSpeed * Time.fixedDeltaTime;
-		transform.position += mVars.moveAmount;
+//		body.position += mVars.moveAmount;
+		if (mVars.oldMoveAmount != mVars.moveAmount) {
+			Decelerate (mVars.oldMoveAmount,4);
+			mVars.moveAmount *= 2;
+		}
+	
+		body.AddForce(mVars.moveAmount,ForceMode2D.Force);
+
+		if (mVars.oldMoveAmount != mVars.moveAmount) {
+			mVars.moveAmount /= 2;
+		}
 	}
 
-	void Decelerate(float multiplier = 1) {
-		currentSpeed -= acceleration * multiplier;
-		if (currentSpeed < 0)
-			currentSpeed = 0;
+	void Decelerate(Vector3 move, float multiplier = 1) {
+//		currentSpeed -= acceleration * multiplier;
+//		if (currentSpeed < 0)
+//			currentSpeed = 0;
+		body.AddForce(-mVars.moveAmount * multiplier);
 	}
 
 	struct MovementVars{
 		public Vector3 moveAmount;
+		public Vector3 oldMoveAmount;
 
 		public void Reset() {
 			moveAmount = Vector3.zero;
+			oldMoveAmount = Vector3.zero;
 		}
 	}
 }

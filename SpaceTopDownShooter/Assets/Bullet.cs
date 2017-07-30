@@ -23,15 +23,4 @@ public class Bullet : MonoBehaviour {
 	public void SetBulletSpeed(float f){
 		moveSpeed = f;
 	}
-
-	void OnColliderEnter2D(Collider2D other) {
-		if (other.tag == "Player"){
-			if (hurtsPlayer){
-				other.GetComponent<Player> ().TakeDamage (damage);
-			}
-		}
-		else {
-			
-		}
-	}
 }
