@@ -115,8 +115,9 @@ public class CharacterMotor : MonoBehaviour {
 			Decelerate (mVars.oldMoveAmount,4);
 			mVars.moveAmount *= 2;
 		}
-	
-		body.AddForce(mVars.moveAmount,ForceMode2D.Force);
+
+		if (thrusting)
+			body.AddForce(mVars.moveAmount,ForceMode2D.Force);
 
 		if (mVars.oldMoveAmount != mVars.moveAmount) {
 			mVars.moveAmount /= 2;
