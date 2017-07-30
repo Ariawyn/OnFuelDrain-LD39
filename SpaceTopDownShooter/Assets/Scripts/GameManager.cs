@@ -2,10 +2,14 @@
 
 public class GameManager : MonoBehaviour {
 
+	// Game state variable!
 	private GAME_STATE state;
+
+	// Score based variables
 	private int score;
 	private int highscore;
 
+	// Behaviour manager instances
 	private InputManager inputManager;
 	private AudioManager audioManager;
 
