@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
 
 	public delegate void PlayerTookDamageEvent (float hp);
 
-	public event PlayerTookDamageEvent OnPlayerTookDamage;
+	public event PlayerTookDamageEvent OnPlayerHealthChanged;
 
 	[Range(0,Mathf.Infinity)]
 	public float fuel = 1000f;
@@ -73,17 +73,17 @@ public class Player : MonoBehaviour {
 		motor.Move (vInput, hInput);
 	}
 
-	public void TakeDamage(float damage) {
+	public void UpdateHealth(float damage) {
 		Debug.Log ("Ouch! " + damage);
-		health -= damage;
+		health += damage;
 
 		if (fuel + damage < maxFuel)
 			fuel += damage;
 		else
 			fuel = maxFuel;
 
-		if (OnPlayerTookDamage != null)
-			OnPlayerTookDamage(damage);
+		if (OnPlayerHealthChanged != null)
+			OnPlayerHealthChanged(damage);
 
 		if (OnPlayerFuelIncreased != null)
 			OnPlayerFuelIncreased (fuel);

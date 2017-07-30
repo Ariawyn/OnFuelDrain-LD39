@@ -10,7 +10,10 @@ public class Bullet : MonoBehaviour {
 
 	public bool hurtsPlayer = false;
 
-	public float damage = 5;
+	/// <summary>
+	/// THIS SHOULD BE NEGATIVE
+	/// </summary>
+	public float damage = -5;
 
 	void FixedUpdate () {
 		destroyTimer -= Time.fixedDeltaTime;
@@ -30,7 +33,7 @@ public class Bullet : MonoBehaviour {
 		if (other.gameObject.tag == "Player"){
 			Player p = other.gameObject.GetComponent<Player> ();
 			if (this.hurtsPlayer) {
-				other.gameObject.SendMessage("TakeDamage", this.damage);
+				other.gameObject.SendMessage("UpdateHealth", this.damage);
 			}
 		}
 		if (other.gameObject.tag == "Enemy") {
@@ -38,7 +41,7 @@ public class Bullet : MonoBehaviour {
 			Enemy e = other.gameObject.GetComponent<Enemy> ();
 			if (this.hurtsPlayer == false) {
 //				Debug.Log ("I'm the right kind of bullet");
-				other.gameObject.SendMessage ("TakeDamage", this.damage);
+				other.gameObject.SendMessage ("UpdateHealth", this.damage);
 			}
 		}
 	}

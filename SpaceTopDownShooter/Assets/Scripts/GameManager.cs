@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour {
 		if(!this.playerFound) {
 			this.player = FindObjectOfType<Player>();
 			if(this.player) {
-				this.player.OnPlayerTookDamage += UpdateScore;
+				this.player.OnPlayerHealthChanged += UpdateScore;
 				this.playerFound = true;
 			}
 		}

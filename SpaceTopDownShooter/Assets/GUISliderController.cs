@@ -17,7 +17,7 @@ public class GUISliderController : MonoBehaviour {
 		p = FindObjectOfType<Player> ();
 		s = this.GetComponent<Slider> ();
 		if (!isFuel)
-			p.OnPlayerTookDamage += HandlePlayerTookDamage;
+			p.OnPlayerHealthChanged += HandlePlayerTookDamage;
 
 		if (!isFuel)
 			s.maxValue = p.maxFuel;
@@ -27,7 +27,7 @@ public class GUISliderController : MonoBehaviour {
 	
 	void HandlePlayerTookDamage(float damage) {
 		if (!isFuel)
-			s.value -= damage;
+			s.value += damage;
 	}
 
 	void Update() {
