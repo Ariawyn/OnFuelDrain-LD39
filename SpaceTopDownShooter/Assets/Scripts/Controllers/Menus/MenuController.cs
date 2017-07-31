@@ -49,6 +49,12 @@ public class MenuController : MonoBehaviour {
 		this.gameManager.Play();
 	}
 
+	public void Retry() {
+		this.gameManager.ResetScore();
+		this.gameManager.ResetTimer();
+		this.gameManager.Play();
+	}
+
 	public void Resume() {
 		this.gameManager.Unpause();
 	}
