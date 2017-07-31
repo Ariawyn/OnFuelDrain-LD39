@@ -28,8 +28,16 @@ public class Enemy : MonoBehaviour {
 
 	private int worth;
 
+	private float shootTime = 2.0f;
+	private float currentShootTimer;
+
+	private float bulletSpeed = 5f;
+
+	private AudioManager audioManager;
+
 	void Awake() {
 		this.gameManager = Object.FindObjectOfType<GameManager>();
+		this.audioManager = Object.FindObjectOfType<AudioManager>();
 	}
 
 	// Use this for initialization
@@ -42,6 +50,9 @@ public class Enemy : MonoBehaviour {
 		this.worth = 5;
 
 		this.speed = 14f;
+
+		this.shootTime = 2.0f;
+		this.currentShootTimer = this.shootTime;
 
 		this.motor = GetComponent<CharacterMotor>();
 	}
@@ -60,6 +71,23 @@ public class Enemy : MonoBehaviour {
 		}
 
 		this.motor.Move(this.target, this.minDistance, this.maxDistance, this.speed, ref this.inRange);
+
+		if(this.currentShootTimer < 0) {
+			this.Shoot();
+			this.currentShootTimer = this.shootTime;
+		} else {
+			this.currentShootTimer -= Time.deltaTime;
+		}
+	}
+
+	private void Shoot() {
+		this.audioManager.Play("Fire!");
+		Vector3 startPosition = this.transform.position + (this.transform.up * 0.25f);
+		GameObject instantiatedBullet = GameObject.Instantiate (this.bullet, startPosition, transform.rotation);
+		Bullet currentBullet = instantiatedBullet.GetComponent<Bullet>();
+//						GameObject bullet = SimplePool.Spawn(bulletGO,t.position,transform.rotation);
+		currentBullet.SetBulletSpeed (bulletSpeed);
+		currentBullet.hurtsPlayer = true;
 	}
 
 	public void TakeDamage(float damage) {

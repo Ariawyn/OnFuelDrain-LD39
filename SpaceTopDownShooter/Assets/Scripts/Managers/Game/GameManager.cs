@@ -67,10 +67,10 @@ public class GameManager : MonoBehaviour {
 		this.timerIsCounting = false;
 
 		// Set enemy spawn times
-		this.basicEnemySpawnTime = 4;
+		this.basicEnemySpawnTime = 5;
 
 		// Set enemy max amount
-		this.maxBasicEnemyAmount = 60;
+		this.maxBasicEnemyAmount = 25;
 		this.basicEnemyCount = 0;
 
 		// Set spawner variables
@@ -188,9 +188,12 @@ public class GameManager : MonoBehaviour {
 		// TODO: disable pause menu ui overlay
 	}
 
-	public void Finish() {
+	public void EndGame() {
 		// Set game state
 		this.state = GAME_STATE.FINISHED;
+
+		// Destroy player object
+		Destroy(this.player);
 
 		// Check for high score
 		if(this.score > this.highscore) {
@@ -205,6 +208,12 @@ public class GameManager : MonoBehaviour {
 	public void UpdateScore(float pointsToAdd) {
 		// Add points to score
 		int roundedPoints = Mathf.RoundToInt(pointsToAdd);
+
+		if(roundedPoints < 0) {
+			// This is because we have been taking damage so we get passed a negative amount
+			roundedPoints = -roundedPoints;
+		}
+
 		this.score += roundedPoints;
 
 		// Notify ui manager
@@ -216,6 +225,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void SpawnBasicEnemies(int amount) {
+
+		Debug.Log("Attempting to spawn: " + amount + " of basic enemies at " + Mathf.RoundToInt(this.gameTimer));
+
 		// Loop through amount
 		for(int i = 0; i < amount; i++) {
 			// Check if we would exceed the max basic enemy amount allowed

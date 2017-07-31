@@ -43,6 +43,17 @@ public class CameraController : MonoBehaviour {
 	private float smoothLookAheadVerticalVelocity;
 	private float smoothLookAheadHorizontalVelocity;
 
+	// Camera effects
+	// Camera shake:
+	private CameraShake shakeEffect;
+	private bool isShaking;
+
+	// Even earlier initialization
+	void Awake() {
+		// Get instance of camera shake effects
+		this.shakeEffect = GetComponent<CameraShake>();
+	}
+
 
 	// Use this for initialization
 	void Start () {
@@ -51,17 +62,37 @@ public class CameraController : MonoBehaviour {
 
 		// Create focusArea;
 		this.focusArea = new FocusArea(this.targetBounds, focusAreaSize);
+
+		// Disable camera shake
+		this.shakeEffect.enabled = false;
+		this.isShaking = false;
 	}
 	
+	// 
+	public void Shake() {
+		if(!this.isShaking) {
+			this.isShaking = true;
+			this.shakeEffect.enabled = true;
+			this.shakeEffect.shakeDuration = 0.5f;
+		}
+	}
+
 	void Update() {
 		// Update bounds position
 		this.targetBounds.center = this.target.position;
 
 		// Update focusArea
 		this.focusArea.Update(this.targetBounds);
+
+		// Check if we stopped shacking if it was enabled
+		if(this.isShaking) {
+			if(!this.shakeEffect.enabled) {
+				this.isShaking = false;
+			}
+		}
 	}
 
-	void FixedUpdate() {
+	void LateUpdate() {
 
 		// TODO: Check if the player stops while we are trying to change the look ahead values
 		// In that case we do not want to continue moving the lookahead focus position forward

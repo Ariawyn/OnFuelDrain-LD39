@@ -34,17 +34,18 @@ public class Bullet : MonoBehaviour {
 			Player p = other.gameObject.GetComponent<Player> ();
 			if (this.hurtsPlayer) {
 				other.gameObject.SendMessage("UpdateHealth", this.damage);
+				Destroy(this.gameObject);
 			}
 		}
 		if (other.gameObject.tag == "Enemy") {
 //			Debug.Log ("I found the enemy");
 			Enemy e = other.gameObject.GetComponent<Enemy> ();
-			if (this.hurtsPlayer == false) {
+			if (!this.hurtsPlayer) {
 //				Debug.Log ("I'm the right kind of bullet");
 				other.gameObject.SendMessage ("TakeDamage", this.damage);
+				Destroy(this.gameObject);
 			}
 		}
-		Destroy(this.gameObject);
 	}
 
 }

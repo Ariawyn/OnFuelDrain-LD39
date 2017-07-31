@@ -34,6 +34,7 @@ public class Player : MonoBehaviour {
 
 	private InputManager inputManager;
 	private AudioManager audioManager;
+	private GameManager gameManager;
 
 	// For shooting coroutine
 	private float secondsBetweenBulletFire = 0.25f;
@@ -42,6 +43,9 @@ public class Player : MonoBehaviour {
 	public Transform[] gunTransforms;
 	public bool alternateGuns = true;
 	int gIndex = 0;
+
+	// Camera instance to call shake effect
+	private CameraController cam;
 
 	void Awake() {
 		inputManager = Object.FindObjectOfType<InputManager> ();
@@ -54,17 +58,32 @@ public class Player : MonoBehaviour {
 	void Start () {
 //		bulletSpeed = maxSpeed * 1.5f;
 
+		cam = Object.FindObjectOfType<CameraController>();
+
 		// Start running the shoot coroutine, which allows for us to wait a few seconds for when the player can fire after he already did
 		StartCoroutine(Shoot());
+
+	}
+
+	void Update() {
+		// Check if the player has died
+		if (this.health <= 0) {
+			// Call game manager finish function
+			this.gameManager.EndGame();
+		}
 	}
 
 	void FixedUpdate() {
+		/*if(!cam) {
+			cam = Object.FindObjectOfType<CameraController>();
+		}*/
+
 //		bulletSpeed = (motor.currentSpeed > motor.maxSpeed) ? motor.currentSpeed : motor.maxSpeed;
 		float hInput = this.inputManager.horizontalAxis.GetRawAxisInput ();
 		float vInput = this.inputManager.verticalAxis.GetRawAxisInput ();
 		ReduceFuel (fuelLossRate);
 		if (fuel % 5 == 0)
-			Debug.Log ("Fuel: " + fuel);
+			//Debug.Log ("Fuel: " + fuel);
 
 		if (fuel <= 0) {
 			hInput = 0;
@@ -73,20 +92,30 @@ public class Player : MonoBehaviour {
 		motor.Move (vInput, hInput);
 	}
 
-	public void UpdateHealth(float damage) {
-		Debug.Log ("Ouch! " + damage);
-		health += damage;
+	public void UpdateHealth(float amount) {
+		float oldHealth = this.health;
+		this.health += amount;
+		bool takingdamage = (this.health < oldHealth);
 
-		if (fuel + damage < maxFuel)
-			fuel += damage;
-		else
-			fuel = maxFuel;
+		if(takingdamage) {
+			// Add fuel to amount * 2
+			if (this.fuel + (-amount * 2) <= this.maxFuel)
+				this.fuel += (-amount * 2);
+			else
+				this.fuel = this.maxFuel;
 
+			// Do camera shake effect
+			if(this.cam) {
+				this.cam.Shake();
+			}
+		
+			if (OnPlayerFuelIncreased != null)
+				OnPlayerFuelIncreased (this.fuel);
+
+		}
+		
 		if (OnPlayerHealthChanged != null)
-			OnPlayerHealthChanged(damage);
-
-		if (OnPlayerFuelIncreased != null)
-			OnPlayerFuelIncreased (fuel);
+			OnPlayerHealthChanged(amount);
 	}
 
 	void ReduceFuel(float fuelLoss) {
@@ -113,6 +142,7 @@ public class Player : MonoBehaviour {
 						bullet.GetComponent<Bullet> ().hurtsPlayer = false;
 					}
 				}
+
 				yield return new WaitForSeconds(secondsBetweenBulletFire);
 			} else {
 				yield return null;
