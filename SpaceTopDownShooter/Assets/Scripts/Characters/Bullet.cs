@@ -45,7 +45,7 @@ public class Bullet : MonoBehaviour {
 		if (other.gameObject.tag == "Player"){
 			Player p = other.gameObject.GetComponent<Player> ();
 			if (this.hurtsPlayer) {
-				other.gameObject.SendMessage("UpdateHealth", this.damage);
+				other.gameObject.SendMessage("WasHit", this.damage);
 				other.gameObject.SendMessage ("UpdateFuel", updateFuelAmount);
 //				Destroy(this.gameObject);
 				SimplePool.Despawn(this.gameObject);

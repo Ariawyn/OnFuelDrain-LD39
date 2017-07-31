@@ -59,9 +59,13 @@ public class Player : MonoBehaviour {
 	public float health = 1000f;
 	public float maxHealth = 1000f;
 
-	public delegate void PlayerTookDamageEvent (float hp);
+	public delegate void PlayerHealthChangedEvent (float hp);
 
-	public event PlayerTookDamageEvent OnPlayerHealthChanged;
+	public event PlayerHealthChangedEvent OnPlayerHealthChanged;
+
+	public delegate void PlayerWasHitEvent (float hp);
+
+	public event PlayerWasHitEvent OnPlayerWasHit;
 
 	// For the health/fuel swap ability.
 	public float healthForFuelSwap = 50f;
@@ -142,6 +146,12 @@ public class Player : MonoBehaviour {
 			vInput = 0;
 		}
 		motor.Move (vInput, hInput);
+	}
+
+	public void WasHit(float hp) {
+		UpdateHealth (hp);
+		if (OnPlayerWasHit != null)
+			OnPlayerWasHit (hp);
 	}
 
 	public void UpdateHealth(float amount) {
