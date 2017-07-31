@@ -68,13 +68,16 @@ public class Enemy : MonoBehaviour {
 //		this.motor = GetComponent<CharacterMotor>();
 //	}
 
+	void Start() {
+		this.gameManager = Object.FindObjectOfType<GameManager>();
+		this.audioManager = Object.FindObjectOfType<AudioManager>();
+	}
+
 	/// <summary>
 	/// SimplePool can't call Start() or Awake() on Spawning, so I'm moving all of the intialization stuff to this function..
 	/// That way, we can call Initialize in the game manager for every spawn.
 	/// </summary>
 	public void InitializeEverything() {
-		this.gameManager = Object.FindObjectOfType<GameManager>();
-		this.audioManager = Object.FindObjectOfType<AudioManager>();
 
 		this.maxDistance = this.shootDistanceThreshold = 8f;
 		this.minDistance = 4f;

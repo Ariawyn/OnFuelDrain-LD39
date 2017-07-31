@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour {
 
 	// Cache the player to receive score update
 	Player player;
-	bool playerFound = false;
 
 	// Event system for updating the score in GUI.
 	public delegate void ScoreUpdatedEvent(int score);
@@ -86,11 +85,12 @@ public class GameManager : MonoBehaviour {
 
 	void Update() {
 		// Attempt to locate player object and add UpdateScore to OnPlayerTookDamage
-		if(!this.playerFound) {
+		if(!this.player) {
 			this.player = FindObjectOfType<Player>();
 			if(this.player) {
 				this.player.OnPlayerWasHit += UpdateScore;
 				this.playerFound = true;
+				this.player.OnPlayerHealthChanged += UpdateScore;
 			}
 		}
 
@@ -229,10 +229,10 @@ public class GameManager : MonoBehaviour {
 		// Set game state
 		this.state = GAME_STATE.FINISHED;
 
-		// Destroy player object
-		Destroy(this.player);
-
 		Debug.Log("Game over");
+
+		this.timerIsCounting = false;
+
 		UnityEngine.SceneManagement.SceneManager.LoadScene(4);
 
 		// Check for high score
@@ -256,8 +256,18 @@ public class GameManager : MonoBehaviour {
 
 		this.score += roundedPoints;
 
+		Debug.Log(this.score);
+
 		// Notify ui manager
 		OnScoreUpdated(roundedPoints);
+	}
+
+	public void ResetScore() {
+		this.score = 0;
+	}
+
+	public void ResetTimer() {
+		this.gameTimer = 0f;
 	}
 
 	public void DecrementEnemyCount() {
