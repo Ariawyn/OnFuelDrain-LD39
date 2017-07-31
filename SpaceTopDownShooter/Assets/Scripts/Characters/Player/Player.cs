@@ -4,21 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	/// <summary>
-	/// The bullet gameObject
-	/// </summary>
-	public GameObject bulletGO;
-
-	/// <summary>
-	/// The speed bullets will move at. NOT the fire rate.
-	/// </summary>
-	public float bulletSpeed = 5f;
-
-	public float health = 1000f;
-
-	public delegate void PlayerTookDamageEvent (float hp);
-
-	public event PlayerTookDamageEvent OnPlayerHealthChanged;
+	// =======
+	// Movement Variables
+	// =======
 
 	[Range(0,Mathf.Infinity)]
 	public float fuel = 1000f;
@@ -30,14 +18,34 @@ public class Player : MonoBehaviour {
 	/// </summary>
 	public float fuelLossRate = -1f;
 
+	CharacterMotor motor;
+
+	public bool IsBoosting { get; protected set;}
+	public float boostingFuelLossRate = 2;
+
+	public float maxBoostSpeed = 200;
+	public float maxBoostAcceleration = 100;
+
 	public delegate void PlayerFuelChangedEvent (float f);
 	public event PlayerFuelChangedEvent OnPlayerFuelChanged;
 
-	CharacterMotor motor;
+	// =======
+	// END Movement Variables
+	// =======
 
-	private InputManager inputManager;
-	private AudioManager audioManager;
-	private GameManager gameManager;
+	// =======
+	// Shooting and Health Variables
+	// =======
+
+	/// <summary>
+	/// The bullet gameObject
+	/// </summary>
+	public GameObject bulletGO;
+
+	/// <summary>
+	/// The speed bullets will move at. NOT the fire rate.
+	/// </summary>
+	public float bulletSpeed = 5f;
 
 	// For shooting coroutine
 	private float secondsBetweenBulletFire = 0.25f;
@@ -47,14 +55,38 @@ public class Player : MonoBehaviour {
 	public bool alternateGuns = true;
 	int gIndex = 0;
 
-	public bool IsBoosting { get; protected set;}
-	public float boostingFuelLossRate = 2;
 
-	public float maxBoostSpeed = 200;
-	public float maxBoostAcceleration = 100;
+	public float health = 1000f;
+
+	public delegate void PlayerTookDamageEvent (float hp);
+
+	public event PlayerTookDamageEvent OnPlayerHealthChanged;
+
+	// For the health/fuel swap ability.
+	public float healthForFuelSwap = 50f;
+
+	// How many seconds between health/fuel swaps.
+	public float swapTimer = 5f;
+
+	float currentSwapTimer = 0f;
+
+	// =======
+	// END Shooting and Health Variables
+	// =======
+
+	// =======
+	// Managers
+	// =======
+	private InputManager inputManager;
+	private AudioManager audioManager;
+	private GameManager gameManager;
 
 	// Camera instance to call shake effect
 	private CameraController cam;
+
+	// =======
+	// END VARIABLES
+	// =======
 
 	void Awake() {
 		inputManager = Object.FindObjectOfType<InputManager> ();
@@ -66,7 +98,6 @@ public class Player : MonoBehaviour {
 	}
 
 	void Start () {
-//		bulletSpeed = maxSpeed * 1.5f;
 
 		cam = Object.FindObjectOfType<CameraController>();
 
@@ -87,13 +118,18 @@ public class Player : MonoBehaviour {
 		/*if(!cam) {
 			cam = Object.FindObjectOfType<CameraController>();
 		}*/
+		currentSwapTimer -= Time.fixedDeltaTime;
 
-//		bulletSpeed = (motor.currentSpeed > motor.maxSpeed) ? motor.currentSpeed : motor.maxSpeed;
 		float hInput = this.inputManager.horizontalAxis.GetRawAxisInput ();
 		float vInput = this.inputManager.verticalAxis.GetRawAxisInput ();
 
 		SetBoosting (this.inputManager.GetKey ("Boost"));
 		HandleBoosting (motor.maxSpeed,motor.acceleration);
+
+		if (this.inputManager.GetKey ("Swap") && currentSwapTimer <= 0 ) {
+			SwapHealthForFuel ();
+			currentSwapTimer = swapTimer;
+		}
 
 		UpdateFuel (fuelLossRate);
 		/*
@@ -144,7 +180,7 @@ public class Player : MonoBehaviour {
 		IsBoosting = isBoosting;
 	}
 
-	public void HandleBoosting(float oldMaxSpeed, float oldAcceleration) {
+	void HandleBoosting(float oldMaxSpeed, float oldAcceleration) {
 		if (IsBoosting) {
 			Debug.Log ("IsBoosting!");
 			motor.maxSpeed = maxBoostSpeed;
@@ -153,6 +189,11 @@ public class Player : MonoBehaviour {
 			motor.maxSpeed = oldMaxSpeed;
 			motor.acceleration = oldAcceleration;
 		}
+	}
+
+	void SwapHealthForFuel() {
+		UpdateHealth (-healthForFuelSwap);
+		UpdateFuel (healthForFuelSwap);
 	}
 
 	IEnumerator Shoot() {

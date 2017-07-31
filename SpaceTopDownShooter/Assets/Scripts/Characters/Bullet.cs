@@ -56,8 +56,8 @@ public class Bullet : MonoBehaviour {
 			Enemy e = other.gameObject.GetComponent<Enemy> ();
 			if (!this.hurtsPlayer) {
 //				Debug.Log ("I'm the right kind of bullet");
-				other.gameObject.SendMessage ("UpdateHealth", -this.damage);
-				other.gameObject.SendMessage ("UpdateFuel", updateFuelAmount);
+				other.gameObject.SendMessage ("UpdateHealth", this.damage);
+//				other.gameObject.SendMessage ("UpdateFuel", updateFuelAmount);
 //				Destroy(this.gameObject);
 				SimplePool.Despawn(this.gameObject);
 			}

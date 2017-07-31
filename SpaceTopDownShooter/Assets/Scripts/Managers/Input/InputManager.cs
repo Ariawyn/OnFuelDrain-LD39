@@ -56,6 +56,8 @@ public class InputManager : MonoBehaviour {
 
 			this.controls ["Boost"] = KeyCode.F;
 
+			this.controls ["Swap"] = KeyCode.J;
+
 			// Game stuff keys:
 			this.controls["Pause"] = KeyCode.Escape;
 
