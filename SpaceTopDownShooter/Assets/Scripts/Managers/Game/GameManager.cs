@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour {
 		this.spawnOffsetDistance = 20;
 
 		// TODO: Maybe dont do this when we get the main menu done
-		this.Play();
+		this.Menu();
 	}
 
 	void Update() {
@@ -143,8 +143,23 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public void Menu() {
+		Debug.Log("Pretend in menu");
+		UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+		this.Tutorial();
+	}
+
+	public void Tutorial() {
+		Debug.Log("Now in tutorial");
+		UnityEngine.SceneManagement.SceneManager.LoadScene(2);
+		this.Play();
+	}
+
 	// Function to be called when Play button is hit in main menu
 	public void Play() {
+		UnityEngine.SceneManagement.SceneManager.LoadScene(3);
+
+		Debug.Log("Now playing");
 		// Set game state
 		this.state = GAME_STATE.RUNNING;
 		// TODO: Switch scene from main_menu to game scene
@@ -189,11 +204,15 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void EndGame() {
+
 		// Set game state
 		this.state = GAME_STATE.FINISHED;
 
 		// Destroy player object
 		Destroy(this.player);
+
+		Debug.Log("Game over");
+		UnityEngine.SceneManagement.SceneManager.LoadScene(4);
 
 		// Check for high score
 		if(this.score > this.highscore) {

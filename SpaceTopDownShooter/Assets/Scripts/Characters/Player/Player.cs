@@ -50,6 +50,7 @@ public class Player : MonoBehaviour {
 	void Awake() {
 		inputManager = Object.FindObjectOfType<InputManager> ();
 		audioManager = Object.FindObjectOfType<AudioManager>();
+		gameManager = Object.FindObjectOfType<GameManager>();
 		motor = GetComponent<CharacterMotor> ();
 		SimplePool.Preload (bulletGO, 20);
 		maxFuel = fuel;

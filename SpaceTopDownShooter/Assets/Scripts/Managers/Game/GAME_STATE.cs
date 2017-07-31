@@ -1,5 +1,6 @@
 ﻿public enum GAME_STATE {
 	MAIN_MENU,
+	TUTORIAL,
 	RUNNING,
 	PAUSED,
 	FINISHED
