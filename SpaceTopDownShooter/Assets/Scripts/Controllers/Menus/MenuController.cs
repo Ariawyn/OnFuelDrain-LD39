@@ -49,6 +49,10 @@ public class MenuController : MonoBehaviour {
 		this.gameManager.Play();
 	}
 
+	public void Resume() {
+		this.gameManager.Unpause();
+	}
+
 	// Quit() function triggered on click of Quit menu button
 	public void Quit() {
 		#if UNITY_EDITOR

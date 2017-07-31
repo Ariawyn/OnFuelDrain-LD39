@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -42,6 +43,9 @@ public class GameManager : MonoBehaviour {
 	private int maxBasicEnemyGroupSpawnAmount;
 	private int lastSpawnTime;
 	private int spawnOffsetDistance;
+
+	// Pause menu variables
+	private GameObject pauseMenu;
 
 	// Use this for initialization
 	void Start () {
@@ -87,6 +91,19 @@ public class GameManager : MonoBehaviour {
 			if(this.player) {
 				this.player.OnPlayerHealthChanged += UpdateScore;
 				this.playerFound = true;
+			}
+		}
+
+		// Attempt to locate pause menu if the game is running
+		if(this.state == GAME_STATE.RUNNING && !this.pauseMenu) {
+			Debug.Log("The game is running and we do not have instance of pause menu");
+			this.pauseMenu = GameObject.FindGameObjectWithTag("PauseMenu");
+
+			// Check if we found the pause menu
+			if(this.pauseMenu) {
+				// We found it
+				Debug.Log("We found it!");
+				this.pauseMenu.SetActive(false);
 			}
 		}
 
@@ -141,19 +158,17 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void Tutorial() {
-		Debug.Log("Now in tutorial");
+		// Change to Tutorial scene
 		UnityEngine.SceneManagement.SceneManager.LoadScene(2);
 	}
 
 	// Function to be called when Play button is hit in main menu
 	public void Play() {
+		// Change to game scene
 		UnityEngine.SceneManagement.SceneManager.LoadScene(3);
 
-		Debug.Log("Now playing");
 		// Set game state
 		this.state = GAME_STATE.RUNNING;
-		// TODO: Switch scene from main_menu to game scene
-		// TODO: Start the enemy spawners and score counting
 
 		// Start counting timer
 		this.timerIsCounting = true;
@@ -163,6 +178,14 @@ public class GameManager : MonoBehaviour {
 	public void Pause() {
 		// Set game state
 		this.state = GAME_STATE.PAUSED;
+
+		// Check if we have the pause menu
+		if(!this.pauseMenu) {
+			this.pauseMenu = GameObject.FindGameObjectWithTag("PauseMenu");
+		}
+
+		// Enable pause menu
+		this.pauseMenu.SetActive(true);
 
 		// Pause game
 		Time.timeScale = 0;
@@ -180,6 +203,14 @@ public class GameManager : MonoBehaviour {
 	public void Unpause() {
 		// Set game state
 		this.state = GAME_STATE.RUNNING;
+
+		// Check if we have the pause menu
+		if(!this.pauseMenu) {
+			this.pauseMenu = GameObject.FindGameObjectWithTag("PauseMenu");
+		}
+
+		// Disable pause menu
+		this.pauseMenu.SetActive(false);
 
 		// Unpause game
 		Time.timeScale = 1;
