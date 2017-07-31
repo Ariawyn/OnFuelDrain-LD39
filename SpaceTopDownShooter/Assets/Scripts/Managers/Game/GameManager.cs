@@ -143,7 +143,6 @@ public class GameManager : MonoBehaviour {
 	public void Tutorial() {
 		Debug.Log("Now in tutorial");
 		UnityEngine.SceneManagement.SceneManager.LoadScene(2);
-		this.Play();
 	}
 
 	// Function to be called when Play button is hit in main menu

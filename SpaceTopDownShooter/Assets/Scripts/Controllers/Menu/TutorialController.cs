@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MainMenuController : MonoBehaviour {
+public class TutorialController : MonoBehaviour {
 	// Manager instances
 	private InputManager inputManager;
 	private AudioManager audioManager;
@@ -42,15 +42,6 @@ public class MainMenuController : MonoBehaviour {
 
 	// Play() function triggered on click of Play menu button
 	public void Play() {
-		this.gameManager.Tutorial();
-	}
-
-	// Quit() function triggered on click of Quit menu button
-	public void Quit() {
-		#if UNITY_EDITOR
-			UnityEditor.EditorApplication.isPlaying = false;
-		#else
-			Application.Quit();
-		#endif
+		this.gameManager.Play();
 	}
 }
