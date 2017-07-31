@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class GameOverController : MonoBehaviour {
+public class MenuController : MonoBehaviour {
 	// Manager instances
 	private InputManager inputManager;
 	private AudioManager audioManager;
@@ -37,10 +37,15 @@ public class GameOverController : MonoBehaviour {
 	private void OnDisable() {
 		// button selection is set to false
 		buttonSelected = false;
+		this.audioManager.Play("Fire!");
 	}
 
 	// Play() function triggered on click of Play menu button
-	public void Retry() {
+	public void Tutorial() {
+		this.gameManager.Tutorial();
+	}
+
+	public void Play() {
 		this.gameManager.Play();
 	}
 
