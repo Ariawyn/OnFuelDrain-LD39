@@ -53,10 +53,8 @@ public class InputManager : MonoBehaviour {
 
 			// Interaction keys:
 			this.controls["Fire"] = KeyCode.Space;
-
-			this.controls ["Boost"] = KeyCode.F;
-
-			this.controls ["Swap"] = KeyCode.J;
+			this.controls ["Boost"] = KeyCode.LeftShift;
+			this.controls ["Swap"] = KeyCode.F;
 
 			// Game stuff keys:
 			this.controls["Pause"] = KeyCode.Escape;
