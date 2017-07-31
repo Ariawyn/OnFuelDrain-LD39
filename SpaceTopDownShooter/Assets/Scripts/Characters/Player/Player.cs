@@ -83,9 +83,10 @@ public class Player : MonoBehaviour {
 		float hInput = this.inputManager.horizontalAxis.GetRawAxisInput ();
 		float vInput = this.inputManager.verticalAxis.GetRawAxisInput ();
 		ReduceFuel (fuelLossRate);
+		/*
 		if (fuel % 5 == 0)
-			//Debug.Log ("Fuel: " + fuel);
-
+			Debug.Log ("Fuel: " + fuel);
+		*/
 		if (fuel <= 0) {
 			hInput = 0;
 			vInput = 0;
@@ -120,7 +121,11 @@ public class Player : MonoBehaviour {
 	}
 
 	void ReduceFuel(float fuelLoss) {
-		fuel -= fuelLoss;
+		this.fuel -= fuelLoss;
+
+		if(this.fuel < 0f) {
+			this.fuel = 0f;
+		}
 	}
 
 	IEnumerator Shoot() {
