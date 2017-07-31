@@ -10,13 +10,17 @@ public class GUIScoreUpdate : MonoBehaviour {
 
 	int score;
 
+	Vector3 tPosition;
+
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		t = GetComponent<Text> ();
 		gm = FindObjectOfType < GameManager> ();
 		score = gm.Score;
 		gm.OnScoreUpdated += UpdateScore;
 		t.text = score.ToString();
+
+		tPosition = t.rectTransform.position;
 	}
 	
 	void UpdateScore (int add){
