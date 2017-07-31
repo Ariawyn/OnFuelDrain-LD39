@@ -47,6 +47,12 @@ public class Player : MonoBehaviour {
 	public bool alternateGuns = true;
 	int gIndex = 0;
 
+	public bool IsBoosting { get; protected set;}
+	public float boostingFuelLossRate = 2;
+
+	public float maxBoostSpeed = 200;
+	public float maxBoostAcceleration = 100;
+
 	// Camera instance to call shake effect
 	private CameraController cam;
 
@@ -85,6 +91,10 @@ public class Player : MonoBehaviour {
 //		bulletSpeed = (motor.currentSpeed > motor.maxSpeed) ? motor.currentSpeed : motor.maxSpeed;
 		float hInput = this.inputManager.horizontalAxis.GetRawAxisInput ();
 		float vInput = this.inputManager.verticalAxis.GetRawAxisInput ();
+
+		SetBoosting (this.inputManager.GetKey ("Boost"));
+		HandleBoosting (motor.maxSpeed,motor.acceleration);
+
 		UpdateFuel (fuelLossRate);
 		/*
 		if (fuel % 5 == 0)
@@ -118,23 +128,32 @@ public class Player : MonoBehaviour {
 
 		bool gainingFuel = (this.fuel < oldFuel);
 
-		if (this.fuel + amount <= this.maxFuel)
+		if (this.fuel + amount <= this.maxFuel && this.fuel + amount >= 0)
 			this.fuel += amount;
-		else
+		else if (this.fuel + amount > this.maxFuel)
 			this.fuel = this.maxFuel;
+		else
+			this.fuel = 0;
 
 		if (OnPlayerFuelChanged != null) {
 			OnPlayerFuelChanged (amount);
 		}
 	}
 
-//	void ReduceFuel(float fuelLoss) {
-//		this.fuel -= fuelLoss;
-//
-//		if(this.fuel < 0f) {
-//			this.fuel = 0f;
-//		}
-//	}
+	public void SetBoosting(bool isBoosting) {
+		IsBoosting = isBoosting;
+	}
+
+	public void HandleBoosting(float oldMaxSpeed, float oldAcceleration) {
+		if (IsBoosting) {
+			Debug.Log ("IsBoosting!");
+			motor.maxSpeed = maxBoostSpeed;
+			motor.acceleration = maxBoostAcceleration;
+		} else {
+			motor.maxSpeed = oldMaxSpeed;
+			motor.acceleration = oldAcceleration;
+		}
+	}
 
 	IEnumerator Shoot() {
 		while(isRunningShootingCoroutine) {
