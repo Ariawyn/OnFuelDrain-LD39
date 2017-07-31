@@ -12,13 +12,13 @@ public class CameraShake : MonoBehaviour {
 	public float shakeDuration = 0f;
 	
 	// Amplitude of the effect.
-	public float shakeAmount = 3f;
+	public float shakeAmount = 1f;
 
 	// How quickly the effect decreases
-	public float decreaseFactor = 2f;
+	public float decreaseFactor = 0.75f;
 	
 	// Speed of shake
-	public float shakeSpeed = 12f;
+	public float shakeSpeed = 2f;
 
 	Vector3 originalPosition;
 

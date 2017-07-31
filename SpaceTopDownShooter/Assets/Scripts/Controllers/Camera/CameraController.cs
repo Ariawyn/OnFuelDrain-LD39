@@ -73,7 +73,7 @@ public class CameraController : MonoBehaviour {
 		if(!this.isShaking) {
 			this.isShaking = true;
 			this.shakeEffect.enabled = true;
-			this.shakeEffect.shakeDuration = 0.5f;
+			this.shakeEffect.shakeDuration = 0.2f;
 		}
 	}
 
