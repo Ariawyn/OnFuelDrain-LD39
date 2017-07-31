@@ -105,7 +105,7 @@ public class AudioManager : MonoBehaviour {
 	}
 
 	// Initializes sound dictionary "library" using the sounds array set through inspector
-	private void initLibrary() {
+	public void initLibrary() {
 		// Instantiate a new dictionary
 		this.library = new Dictionary<string, Sound>();
 
@@ -115,11 +115,13 @@ public class AudioManager : MonoBehaviour {
 			this.library[s.name] = s;
 
 			// We also want to create all the audio sources here
-			s.source = this.gameObject.AddComponent<AudioSource>();
-			s.source.clip = s.clip;
-			s.source.volume = s.volume;
-			s.source.pitch = s.pitch;
-			s.source.loop = s.isLooping;
+			if(!s.source) {
+				s.source = this.gameObject.AddComponent<AudioSource>();
+				s.source.clip = s.clip;
+				s.source.volume = s.volume;
+				s.source.pitch = s.pitch;
+				s.source.loop = s.isLooping;
+			}
 		}
 	}
 }

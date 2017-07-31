@@ -43,8 +43,10 @@ public class GameManager : MonoBehaviour {
 	private int lastSpawnTime;
 	private int spawnOffsetDistance;
 
-	// Pause menu variables
+	// UI specific variables that cannot be handled elsewhere
 	private GameObject pauseMenu;
+	private Text scoreGUItext;
+
 
 	// Use this for initialization
 	void Start () {
@@ -105,6 +107,17 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+		// Attempt to locate score text if the game is running
+		if(this.state == GAME_STATE.RUNNING && !this.scoreGUItext) {
+			Debug.Log("The game is running and we do not have instance of scoreGUItext");
+			this.scoreGUItext = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>() as Text;
+
+			if(this.scoreGUItext) {
+				Debug.Log("Found text thingy");
+				this.scoreGUItext.text = "0";
+			}
+		}
+
 		// Check if game is paused, this should only occur if the game is in the running or paused state, not menu or finished
 		if(this.state == GAME_STATE.RUNNING || this.state == GAME_STATE.PAUSED) {
 			// If the pause key is pressed
@@ -155,7 +168,16 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public void Menu() {
+		this.state = GAME_STATE.MAIN_MENU;
+
+		// Change to Tutorial scene
+		UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+	}
+
 	public void Tutorial() {
+		this.state = GAME_STATE.TUTORIAL;
+
 		// Change to Tutorial scene
 		UnityEngine.SceneManagement.SceneManager.LoadScene(2);
 	}
@@ -256,8 +278,20 @@ public class GameManager : MonoBehaviour {
 
 		Debug.Log(this.score);
 
+		// Attempt to locate score text if the game is running
+		if(!this.scoreGUItext) {
+			Debug.Log("We want to update scoreGUItext and we do not have instance of scoreGUItext");
+			this.scoreGUItext = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>() as Text;
+
+			if(this.scoreGUItext) {
+				Debug.Log("Found text thingy");
+			}
+		}
+
+		this.scoreGUItext.text = this.score.ToString();
+
 		// Notify ui manager
-		OnScoreUpdated(roundedPoints);
+		//OnScoreUpdated(roundedPoints);
 	}
 
 	public void ResetScore() {
@@ -266,6 +300,10 @@ public class GameManager : MonoBehaviour {
 
 	public void ResetTimer() {
 		this.gameTimer = 0f;
+	}
+
+	public void ResetAudio() {
+		this.audioManager.initLibrary();
 	}
 
 	public void DecrementEnemyCount() {

@@ -40,7 +40,10 @@ public class MenuController : MonoBehaviour {
 		this.audioManager.Play("Fire!");
 	}
 
-	// Play() function triggered on click of Play menu button
+	public void Menu() {
+		this.gameManager.Menu();
+	}
+
 	public void Tutorial() {
 		this.gameManager.Tutorial();
 	}
@@ -52,6 +55,7 @@ public class MenuController : MonoBehaviour {
 	public void Retry() {
 		this.gameManager.ResetScore();
 		this.gameManager.ResetTimer();
+		this.gameManager.ResetAudio();
 		this.gameManager.Play();
 	}
 
