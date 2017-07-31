@@ -12,7 +12,7 @@ public class Player : MonoBehaviour {
 	/// <summary>
 	/// The speed bullets will move at. NOT the fire rate.
 	/// </summary>
-	public float bulletSpeed = 30f;
+	public float bulletSpeed = 5f;
 
 	public float health = 1000f;
 

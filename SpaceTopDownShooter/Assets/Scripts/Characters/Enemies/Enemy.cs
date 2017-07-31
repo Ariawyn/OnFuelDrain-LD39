@@ -41,7 +41,7 @@ public class Enemy : MonoBehaviour {
 
 		this.worth = 5;
 
-		this.speed = 5f;
+		this.speed = 14f;
 
 		this.motor = GetComponent<CharacterMotor>();
 	}

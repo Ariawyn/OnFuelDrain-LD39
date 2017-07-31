@@ -18,6 +18,9 @@ public class CameraController : MonoBehaviour {
 	private FocusArea focusArea;
 	public Vector2 focusAreaSize;
 
+	// Boolean for checking if we want to have follow player or use focus area;
+	public bool useFocusLookAhead;
+
 	// Distance offset used for look ahead of player
 	public float verticalLookAheadDistance;
 	public float horizontalLookAheadDistance;
@@ -63,38 +66,41 @@ public class CameraController : MonoBehaviour {
 		// TODO: Check if the player stops while we are trying to change the look ahead values
 		// In that case we do not want to continue moving the lookahead focus position forward
 		// The if statements below would be useful for that
+		if(useFocusLookAhead) {
+			// Check for focus area movement
+			if(this.focusArea.velocity.x != 0) {
+				// We have focus area movement along the x axis
+				this.horizontalLookAheadDirection = Mathf.Sign(this.focusArea.velocity.x);
+			}
+			if(this.focusArea.velocity.y != 0) {
+				// We have focus area movement along the y axis
+				this.verticalLookAheadDirection = Mathf.Sign(this.focusArea.velocity.y);
+			}
 
-		// Check for focus area movement
-		if(this.focusArea.velocity.x != 0) {
-			// We have focus area movement along the x axis
-			this.horizontalLookAheadDirection = Mathf.Sign(this.focusArea.velocity.x);
+			// Create focus area position for camera to follow
+			Vector2 focusPosition = this.focusArea.center;
+
+			// Set target and current horizontal look ahead
+			this.targetHorizontalLookAhead = this.horizontalLookAheadDirection * this.horizontalLookAheadDistance;
+			this.currentHorizontalLookAhead = Mathf.SmoothDamp(this.currentHorizontalLookAhead, this.targetHorizontalLookAhead, 
+				ref this.smoothLookAheadHorizontalVelocity, this.horizontalLookAheadSmoothTime);
+
+			// Add horizontal look ahead values to focus position
+			focusPosition += Vector2.right * this.currentHorizontalLookAhead;
+
+			// Set target and current vertical look ahead
+			this.targetVerticalLookAhead = this.verticalLookAheadDirection * this.verticalLookAheadDistance;
+			this.currentVerticalLookAhead = Mathf.SmoothDamp(this.currentVerticalLookAhead, this.targetVerticalLookAhead, 
+				ref this.smoothLookAheadVerticalVelocity, this.verticalLookAheadSmoothTime);
+
+			// Add vertical look ahead values to focus position
+			focusPosition += Vector2.up * this.currentVerticalLookAhead;
+
+			// Set the camera position as the focus position, except with correct z axis so we actually capture the things on the camera lol
+			this.transform.position = (Vector3)focusPosition + Vector3.forward * -10;
+		} else {
+			this.transform.position = this.target.position + Vector3.forward * -10;
 		}
-		if(this.focusArea.velocity.y != 0) {
-			// We have focus area movement along the y axis
-			this.verticalLookAheadDirection = Mathf.Sign(this.focusArea.velocity.y);
-		}
-
-		// Create focus area position for camera to follow
-		Vector2 focusPosition = this.focusArea.center;
-
-		// Set target and current horizontal look ahead
-		this.targetHorizontalLookAhead = this.horizontalLookAheadDirection * this.horizontalLookAheadDistance;
-		this.currentHorizontalLookAhead = Mathf.SmoothDamp(this.currentHorizontalLookAhead, this.targetHorizontalLookAhead, 
-			ref this.smoothLookAheadHorizontalVelocity, this.horizontalLookAheadSmoothTime);
-
-		// Add horizontal look ahead values to focus position
-		focusPosition += Vector2.right * this.currentHorizontalLookAhead;
-
-		// Set target and current vertical look ahead
-		this.targetVerticalLookAhead = this.verticalLookAheadDirection * this.verticalLookAheadDistance;
-		this.currentVerticalLookAhead = Mathf.SmoothDamp(this.currentVerticalLookAhead, this.targetVerticalLookAhead, 
-			ref this.smoothLookAheadVerticalVelocity, this.verticalLookAheadSmoothTime);
-
-		// Add vertical look ahead values to focus position
-		focusPosition += Vector2.up * this.currentVerticalLookAhead;
-
-		// Set the camera position as the focus position, except with correct z axis so we actually capture the things on the camera lol
-		this.transform.position = (Vector3)focusPosition + Vector3.forward * -10;
 
 	}
 
