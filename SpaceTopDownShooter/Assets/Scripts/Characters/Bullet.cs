@@ -42,7 +42,7 @@ public class Bullet : MonoBehaviour {
 			Enemy e = other.gameObject.GetComponent<Enemy> ();
 			if (!this.hurtsPlayer) {
 //				Debug.Log ("I'm the right kind of bullet");
-				other.gameObject.SendMessage ("TakeDamage", this.damage);
+				other.gameObject.SendMessage ("TakeDamage", -this.damage);
 				Destroy(this.gameObject);
 			}
 		}
