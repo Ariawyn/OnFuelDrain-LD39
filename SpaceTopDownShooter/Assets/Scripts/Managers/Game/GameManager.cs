@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour {
 	// UI specific variables that cannot be handled elsewhere
 	private GameObject pauseMenu;
 	private Text scoreGUItext;
+	private Text timerGUItext;
 
 
 	// Use this for initialization
@@ -110,11 +111,36 @@ public class GameManager : MonoBehaviour {
 		// Attempt to locate score text if the game is running
 		if(this.state == GAME_STATE.RUNNING && !this.scoreGUItext) {
 			Debug.Log("The game is running and we do not have instance of scoreGUItext");
-			this.scoreGUItext = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>() as Text;
+			GameObject temp = GameObject.FindGameObjectWithTag("ScoreText");
+			
+			// See if we found an object with the score text tag
+			if(temp) {
+				// If we do then we set the text
+				this.scoreGUItext = temp.GetComponent<Text>() as Text;
+			}
 
+			// Init
 			if(this.scoreGUItext) {
-				Debug.Log("Found text thingy");
+				Debug.Log("Found score text");
 				this.scoreGUItext.text = "0";
+			}
+		}
+
+		// Attempt to locate timer text if the game is running
+		if(this.state == GAME_STATE.RUNNING && !this.timerGUItext) {
+			Debug.Log("The game is running and we do not have instance of timerGUItext");
+			GameObject temp = GameObject.FindGameObjectWithTag("TimeText");
+
+			// See if we found an object with the time text tag
+			if(temp) {
+				// Set the timer text variable instance
+				this.timerGUItext = temp.GetComponent<Text>() as Text;
+			}
+
+			// So if we have found and set the text instance variable
+			if(this.timerGUItext) {
+				Debug.Log("Found timer text");
+				this.timerGUItext.text = this.gameTimer.ToString();
 			}
 		}
 
@@ -137,6 +163,22 @@ public class GameManager : MonoBehaviour {
 		if(this.state == GAME_STATE.RUNNING && this.timerIsCounting) {
 			// Increment timer
 			this.gameTimer += Time.deltaTime;
+			
+			// See if we need to attempt to locate timer text in GUI if the game is running
+			if(!this.timerGUItext) {
+				Debug.Log("We want to update timerGUItext and we do not have instance of timerGUItext");
+				GameObject temp = GameObject.FindGameObjectWithTag("TimeText");
+
+				// See if we found an object with the time text tag
+				if(temp) {
+					// Set the timer text variable instance
+					this.timerGUItext = temp.GetComponent<Text>() as Text;
+				}
+			}
+
+			// Update the timer in the GUI
+			double roundedCurrentTime = System.Math.Round(this.gameTimer, 2);
+			this.timerGUItext.text = roundedCurrentTime.ToString();
 
 			// RoundedTimer
 			int roundedTimer = Mathf.CeilToInt(this.gameTimer);
@@ -281,10 +323,12 @@ public class GameManager : MonoBehaviour {
 		// Attempt to locate score text if the game is running
 		if(!this.scoreGUItext) {
 			Debug.Log("We want to update scoreGUItext and we do not have instance of scoreGUItext");
-			this.scoreGUItext = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>() as Text;
-
-			if(this.scoreGUItext) {
-				Debug.Log("Found text thingy");
+			GameObject temp = GameObject.FindGameObjectWithTag("ScoreText");
+			
+			// See if we found an object with the score text tag
+			if(temp) {
+				// If we do then we set the text
+				this.scoreGUItext = temp.GetComponent<Text>() as Text;
 			}
 		}
 
