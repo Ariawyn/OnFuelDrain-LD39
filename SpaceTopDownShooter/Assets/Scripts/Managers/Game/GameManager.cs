@@ -78,9 +78,6 @@ public class GameManager : MonoBehaviour {
 		this.maxBasicEnemyGroupSpawnAmount = 5;
 		this.lastSpawnTime = 0;
 		this.spawnOffsetDistance = 20;
-
-		// TODO: Maybe dont do this when we get the main menu done
-		this.Menu();
 	}
 
 	void Update() {
@@ -141,12 +138,6 @@ public class GameManager : MonoBehaviour {
 				this.SpawnBasicEnemies(amountOfEnemiesToSpawn);
 			}
 		}
-	}
-
-	public void Menu() {
-		Debug.Log("Pretend in menu");
-		UnityEngine.SceneManagement.SceneManager.LoadScene(1);
-		this.Tutorial();
 	}
 
 	public void Tutorial() {
