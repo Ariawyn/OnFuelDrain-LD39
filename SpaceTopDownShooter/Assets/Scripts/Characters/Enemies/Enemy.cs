@@ -26,7 +26,8 @@ public class Enemy : MonoBehaviour {
 	private GameManager gameManager;
 
 	// Health
-	public float health = 10f;
+	public float defaultHealth;
+	private float health;
 
 	private float shootDistanceThreshold;
 	private float minDistance;
@@ -45,6 +46,8 @@ public class Enemy : MonoBehaviour {
 	private AudioManager audioManager;
 
 	public Transform[] gunTransforms;
+
+	public bool isBasic;
 
 //	void Awake() {
 //		this.gameManager = Object.FindObjectOfType<GameManager>();
@@ -86,6 +89,8 @@ public class Enemy : MonoBehaviour {
 
 		this.worth = 5;
 
+		this.health = this.defaultHealth;
+
 		this.speed = 14f;
 
 		this.shootTime = 2.0f;
@@ -97,12 +102,16 @@ public class Enemy : MonoBehaviour {
 
 	void Update() {
 		if (health <= 0) {
-//			Destroy (this.gameObject);
+			//Destroy (this.gameObject);
 			SimplePool.Despawn(this.gameObject);
 			if (dropsHealth)
 				SpawnHealthPickup ();
 			this.gameManager.UpdateScore(this.worth);
-			this.gameManager.DecrementEnemyCount();
+			if(isBasic) {
+				this.gameManager.DecrementBasicEnemyCount();
+			} else {
+				this.gameManager.DecrementOtherEnemyCount();
+			}
 		}
 	}
 
@@ -142,7 +151,7 @@ public class Enemy : MonoBehaviour {
 	}
 
 	void SpawnHealthPickup(bool customPickup = false) {
-		Debug.Log ("I dropped a pickup!");
+		//Debug.Log ("I dropped a pickup!");
 		GameObject pickupGO = SimplePool.Spawn (healthPickup, this.transform.position, Quaternion.identity);
 		HealthPickup pickup = pickupGO.GetComponent<HealthPickup> ();
 		if (customPickup)

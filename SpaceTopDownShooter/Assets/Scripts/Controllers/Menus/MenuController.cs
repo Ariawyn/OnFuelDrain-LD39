@@ -37,7 +37,9 @@ public class MenuController : MonoBehaviour {
 	private void OnDisable() {
 		// button selection is set to false
 		buttonSelected = false;
-		this.audioManager.Play("Fire!");
+		if(this.audioManager) {
+			this.audioManager.Play("Fire!");
+		}
 	}
 
 	public void Menu() {

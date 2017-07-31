@@ -6,6 +6,8 @@ public class CameraShake : MonoBehaviour {
 	// Camera transform instance
 	public Transform camera;
 
+	public Transform cameratarget;
+
 	// Duration of the effect
 	public float shakeDuration = 0f;
 	
@@ -13,10 +15,10 @@ public class CameraShake : MonoBehaviour {
 	public float shakeAmount = 3f;
 
 	// How quickly the effect decreases
-	public float decreaseFactor = 1.0f;
+	public float decreaseFactor = 2f;
 	
 	// Speed of shake
-	public float shakeSpeed = 20f;
+	public float shakeSpeed = 12f;
 
 	Vector3 originalPosition;
 
@@ -45,7 +47,7 @@ public class CameraShake : MonoBehaviour {
 	void LateUpdate () {
 		if (this.shakeDuration > 0)
 		{
-			Vector3 currentShakePosition = this.originalPosition + (Random.insideUnitSphere) * this.shakeAmount; 
+			Vector3 currentShakePosition = this.cameratarget.position + (Random.insideUnitSphere / 2) * this.shakeAmount; 
 			this.camera.localPosition = Vector3.Lerp(this.camera.localPosition, currentShakePosition, Time.deltaTime * this.shakeSpeed);
 			
 			this.shakeDuration -= Time.deltaTime * this.decreaseFactor;
@@ -53,7 +55,7 @@ public class CameraShake : MonoBehaviour {
 		else
 		{
 			this.shakeDuration = 0f;
-			this.camera.localPosition = this.originalPosition;
+			this.camera.localPosition = this.cameratarget.position;
 			this.enabled = false;
 		}
 	}
