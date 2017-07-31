@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour {
 	private float shootTime = 2.0f;
 	private float currentShootTimer;
 
-	private float bulletSpeed = 5f;
+	public float bulletSpeed = 5f;
 
 	private AudioManager audioManager;
 
