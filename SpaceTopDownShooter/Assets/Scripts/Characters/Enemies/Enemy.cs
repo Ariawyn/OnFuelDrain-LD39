@@ -127,7 +127,7 @@ public class Enemy : MonoBehaviour {
 		currentBullet.hurtsPlayer = true;
 	}
 
-	public void TakeDamage(float damage) {
+	public void UpdateHealth(float damage) {
 //		Debug.Log ("Yass you got the bad guy");
 		health -= damage;
 	}

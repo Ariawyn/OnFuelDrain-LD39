@@ -25,10 +25,13 @@ public class Player : MonoBehaviour {
 
 	public float maxFuel;
 
-	public float fuelLossRate = 1f;
+	/// <summary>
+	/// THIS SHOULD BE NEGATIVE
+	/// </summary>
+	public float fuelLossRate = -1f;
 
-	public delegate void PlayerFuelIncreasedEvent (float f);
-	public event PlayerFuelIncreasedEvent OnPlayerFuelIncreased;
+	public delegate void PlayerFuelChangedEvent (float f);
+	public event PlayerFuelChangedEvent OnPlayerFuelChanged;
 
 	CharacterMotor motor;
 
@@ -82,7 +85,7 @@ public class Player : MonoBehaviour {
 //		bulletSpeed = (motor.currentSpeed > motor.maxSpeed) ? motor.currentSpeed : motor.maxSpeed;
 		float hInput = this.inputManager.horizontalAxis.GetRawAxisInput ();
 		float vInput = this.inputManager.verticalAxis.GetRawAxisInput ();
-		ReduceFuel (fuelLossRate);
+		UpdateFuel (fuelLossRate);
 		/*
 		if (fuel % 5 == 0)
 			Debug.Log ("Fuel: " + fuel);
@@ -100,33 +103,38 @@ public class Player : MonoBehaviour {
 		bool takingdamage = (this.health < oldHealth);
 
 		if(takingdamage) {
-			// Add fuel to amount * 2
-			if (this.fuel + (-amount * 2) <= this.maxFuel)
-				this.fuel += (-amount * 2);
-			else
-				this.fuel = this.maxFuel;
-
 			// Do camera shake effect
 			if(this.cam) {
 				this.cam.Shake();
 			}
-		
-			if (OnPlayerFuelIncreased != null)
-				OnPlayerFuelIncreased (this.fuel);
-
 		}
 		
 		if (OnPlayerHealthChanged != null)
 			OnPlayerHealthChanged(amount);
 	}
 
-	void ReduceFuel(float fuelLoss) {
-		this.fuel -= fuelLoss;
+	public void UpdateFuel(float amount) {
+		float oldFuel = this.fuel;
 
-		if(this.fuel < 0f) {
-			this.fuel = 0f;
+		bool gainingFuel = (this.fuel < oldFuel);
+
+		if (this.fuel + amount <= this.maxFuel)
+			this.fuel += amount;
+		else
+			this.fuel = this.maxFuel;
+
+		if (OnPlayerFuelChanged != null) {
+			OnPlayerFuelChanged (amount);
 		}
 	}
+
+//	void ReduceFuel(float fuelLoss) {
+//		this.fuel -= fuelLoss;
+//
+//		if(this.fuel < 0f) {
+//			this.fuel = 0f;
+//		}
+//	}
 
 	IEnumerator Shoot() {
 		while(isRunningShootingCoroutine) {

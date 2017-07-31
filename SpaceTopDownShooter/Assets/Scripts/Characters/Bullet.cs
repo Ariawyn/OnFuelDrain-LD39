@@ -16,9 +16,15 @@ public class Bullet : MonoBehaviour {
 	/// </summary>
 	public float damage = -5;
 
+	/// <summary>
+	/// This defaults to -damage * 2;
+	/// </summary>
+	public float updateFuelAmount;
+
 	void OnEnable() {
 //		Debug.Log ("The bullets are being enabled");
 		currentTimer = destroyTimer;
+		updateFuelAmount = -damage * 2;
 	}
 
 	void FixedUpdate () {
@@ -40,6 +46,7 @@ public class Bullet : MonoBehaviour {
 			Player p = other.gameObject.GetComponent<Player> ();
 			if (this.hurtsPlayer) {
 				other.gameObject.SendMessage("UpdateHealth", this.damage);
+				other.gameObject.SendMessage ("UpdateFuel", updateFuelAmount);
 //				Destroy(this.gameObject);
 				SimplePool.Despawn(this.gameObject);
 			}
@@ -49,7 +56,8 @@ public class Bullet : MonoBehaviour {
 			Enemy e = other.gameObject.GetComponent<Enemy> ();
 			if (!this.hurtsPlayer) {
 //				Debug.Log ("I'm the right kind of bullet");
-				other.gameObject.SendMessage ("TakeDamage", -this.damage);
+				other.gameObject.SendMessage ("UpdateHealth", -this.damage);
+				other.gameObject.SendMessage ("UpdateFuel", updateFuelAmount);
 //				Destroy(this.gameObject);
 				SimplePool.Despawn(this.gameObject);
 			}
