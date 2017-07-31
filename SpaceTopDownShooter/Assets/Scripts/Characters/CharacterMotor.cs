@@ -40,6 +40,8 @@ public class CharacterMotor : MonoBehaviour {
 
 	MovementVars mVars;
 
+	public bool thrusting = false;
+
 	/**
 	 * =========================
 	 * END MOVEMENT VARIABLES
@@ -132,11 +134,12 @@ public class CharacterMotor : MonoBehaviour {
 	}
 
 	public void Move(float vertInput, float HorizInput) {
+		thrusting = false;
 		float turnAmount = HorizInput * turnStrength * -1;
 //		transform.Rotate (new Vector3 (0, 0, turnAmount));
 		body.rotation = body.rotation + turnAmount;
 
-		bool thrusting = false;
+
 		if (vertInput > 0) {
 			if (currentSpeed + acceleration < maxSpeed) {
 				currentSpeed += acceleration;

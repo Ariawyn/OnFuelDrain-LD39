@@ -182,9 +182,11 @@ public class Player : MonoBehaviour {
 
 	void HandleBoosting(float oldMaxSpeed, float oldAcceleration) {
 		if (IsBoosting) {
-			Debug.Log ("IsBoosting!");
-			motor.maxSpeed = maxBoostSpeed;
-			motor.acceleration = maxBoostAcceleration;
+			if (motor.thrusting) {
+				Debug.Log ("IsBoosting!");
+				motor.maxSpeed = maxBoostSpeed;
+				motor.acceleration = maxBoostAcceleration;
+			}
 		} else {
 			motor.maxSpeed = oldMaxSpeed;
 			motor.acceleration = oldAcceleration;
