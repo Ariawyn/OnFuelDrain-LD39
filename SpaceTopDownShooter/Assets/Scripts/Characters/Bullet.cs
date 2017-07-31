@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour {
 	void OnEnable() {
 //		Debug.Log ("The bullets are being enabled");
 		currentTimer = destroyTimer;
-		updateFuelAmount = -damage * 2;
+//		updateFuelAmount = -damage * 2;
 	}
 
 	void FixedUpdate () {

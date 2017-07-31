@@ -44,6 +44,8 @@ public class Enemy : MonoBehaviour {
 
 	private AudioManager audioManager;
 
+	public Transform[] gunTransforms;
+
 //	void Awake() {
 //		this.gameManager = Object.FindObjectOfType<GameManager>();
 //		this.audioManager = Object.FindObjectOfType<AudioManager>();
@@ -118,13 +120,16 @@ public class Enemy : MonoBehaviour {
 
 	private void Shoot() {
 		this.audioManager.Play("Fire!");
-		Vector3 startPosition = this.transform.position + (this.transform.up * 0.25f);
-//		GameObject instantiatedBullet = GameObject.Instantiate (this.bullet, startPosition, transform.rotation);
-		GameObject instantiatedBullet = SimplePool.Spawn(this.bullet,startPosition,transform.rotation);
-		Bullet currentBullet = instantiatedBullet.GetComponent<Bullet>();
-						
-		currentBullet.SetBulletSpeed (bulletSpeed);
-		currentBullet.hurtsPlayer = true;
+		foreach (Transform t in gunTransforms) {
+			Vector3 startPosition = t.position;
+			//		GameObject instantiatedBullet = GameObject.Instantiate (this.bullet, startPosition, transform.rotation);
+			GameObject instantiatedBullet = SimplePool.Spawn(this.bullet,startPosition,transform.rotation);
+			Bullet currentBullet = instantiatedBullet.GetComponent<Bullet>();
+
+			currentBullet.SetBulletSpeed (bulletSpeed);
+			currentBullet.hurtsPlayer = true;
+		}
+
 	}
 
 	public void UpdateHealth(float damage) {
