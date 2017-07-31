@@ -131,6 +131,7 @@ public class Enemy : MonoBehaviour {
 
 			currentBullet.SetBulletSpeed (bulletSpeed);
 			currentBullet.hurtsPlayer = true;
+			currentBullet.updateFuelAmount = 15;
 		}
 
 	}

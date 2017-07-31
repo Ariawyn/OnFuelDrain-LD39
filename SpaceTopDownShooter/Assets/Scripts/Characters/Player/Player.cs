@@ -209,6 +209,7 @@ public class Player : MonoBehaviour {
 				Debug.Log ("IsBoosting!");
 				motor.maxSpeed = maxBoostSpeed;
 				motor.acceleration = maxBoostAcceleration;
+				UpdateFuel (-1);
 			}
 		} else {
 			motor.maxSpeed = oldMaxSpeed;
