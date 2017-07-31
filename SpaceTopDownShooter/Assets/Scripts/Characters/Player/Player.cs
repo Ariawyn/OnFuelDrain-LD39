@@ -57,6 +57,7 @@ public class Player : MonoBehaviour {
 
 
 	public float health = 1000f;
+	public float maxHealth = 1000f;
 
 	public delegate void PlayerTookDamageEvent (float hp);
 
@@ -194,8 +195,8 @@ public class Player : MonoBehaviour {
 	}
 
 	void SwapHealthForFuel() {
-		UpdateHealth (-healthForFuelSwap);
-		UpdateFuel (healthForFuelSwap);
+		UpdateHealth (-(maxHealth/3));
+		UpdateFuel (maxHealth/3);
 	}
 
 	IEnumerator Shoot() {
