@@ -253,8 +253,12 @@ public class GameManager : MonoBehaviour {
 				spawnPoint = this.player.transform.position + spawnPoint;
 
 				// Instantiate the enemy
-				GameObject instantiated = (GameObject)Instantiate(this.basicEnemyPrefab, spawnPoint, Quaternion.identity);
+//				GameObject instantiated = (GameObject)Instantiate(this.basicEnemyPrefab, spawnPoint, Quaternion.identity);
+				GameObject instantiated = SimplePool.Spawn(this.basicEnemyPrefab, spawnPoint, Quaternion.identity);
 				Enemy spawned = instantiated.GetComponent<Enemy>();
+
+				// SimplePool can't call Awake() or Start() on spawn, so we need to manually call that stuff.
+				spawned.InitializeEverything ();
 
 				// Set the players position as target
 				spawned.target = this.player.transform;

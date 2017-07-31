@@ -135,15 +135,15 @@ public class Player : MonoBehaviour {
 				if (alternateGuns) {
 					if (gIndex > gunTransforms.Length - 1 || gIndex == null)
 						gIndex = 0;
-					GameObject bullet = GameObject.Instantiate (bulletGO, gunTransforms[gIndex].position, transform.rotation);
-//					GameObject bullet = SimplePool.Spawn(bulletGO,gunTransforms[gIndex].position,transform.rotation);
+//					GameObject bullet = GameObject.Instantiate (bulletGO, gunTransforms[gIndex].position, transform.rotation);
+					GameObject bullet = SimplePool.Spawn(bulletGO,gunTransforms[gIndex].position,transform.rotation);
 					bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
 					bullet.GetComponent<Bullet> ().hurtsPlayer = false;
 					gIndex+=1;
 				} else {
 					foreach (Transform t in gunTransforms) {
-						GameObject bullet = GameObject.Instantiate (bulletGO, t.position, transform.rotation);
-//						GameObject bullet = SimplePool.Spawn(bulletGO,t.position,transform.rotation);
+//						GameObject bullet = GameObject.Instantiate (bulletGO, t.position, transform.rotation);
+						GameObject bullet = SimplePool.Spawn(bulletGO,t.position,transform.rotation);
 						bullet.GetComponent<Bullet> ().SetBulletSpeed (bulletSpeed);
 						bullet.GetComponent<Bullet> ().hurtsPlayer = false;
 					}

@@ -7,6 +7,7 @@ public class Bullet : MonoBehaviour {
 	public float moveSpeed;
 
 	public float destroyTimer = 5;
+	public float currentTimer;
 
 	public bool hurtsPlayer = false;
 
@@ -15,11 +16,16 @@ public class Bullet : MonoBehaviour {
 	/// </summary>
 	public float damage = -5;
 
+	void OnEnable() {
+		Debug.Log ("The bullets are being enabled");
+		currentTimer = destroyTimer;
+	}
+
 	void FixedUpdate () {
-		destroyTimer -= Time.fixedDeltaTime;
-		if (destroyTimer <= 0) {
-			Destroy (this.gameObject);
-//			SimplePool.Despawn(this.gameObject);
+		currentTimer -= Time.fixedDeltaTime;
+		if (currentTimer <= 0) {
+//			Destroy (this.gameObject);
+			SimplePool.Despawn(this.gameObject);
 		}
 		transform.position += transform.up * moveSpeed * Time.fixedDeltaTime;
 	}
@@ -34,7 +40,8 @@ public class Bullet : MonoBehaviour {
 			Player p = other.gameObject.GetComponent<Player> ();
 			if (this.hurtsPlayer) {
 				other.gameObject.SendMessage("UpdateHealth", this.damage);
-				Destroy(this.gameObject);
+//				Destroy(this.gameObject);
+				SimplePool.Despawn(this.gameObject);
 			}
 		}
 		if (other.gameObject.tag == "Enemy") {
@@ -43,7 +50,8 @@ public class Bullet : MonoBehaviour {
 			if (!this.hurtsPlayer) {
 //				Debug.Log ("I'm the right kind of bullet");
 				other.gameObject.SendMessage ("TakeDamage", -this.damage);
-				Destroy(this.gameObject);
+//				Destroy(this.gameObject);
+				SimplePool.Despawn(this.gameObject);
 			}
 		}
 	}
