@@ -89,6 +89,10 @@ public class Player : MonoBehaviour {
 	// Camera instance to call shake effect
 	private CameraController cam;
 
+	public GameObject particleGO;
+
+	public ParticleSystem particles;
+
 	// =======
 	// END VARIABLES
 	// =======
@@ -100,6 +104,9 @@ public class Player : MonoBehaviour {
 		motor = GetComponent<CharacterMotor> ();
 		SimplePool.Preload (bulletGO, 20);
 		maxFuel = fuel;
+//		particleGO.SetActive (true);
+//		particles = particleGO.GetComponent<ParticleSystem> ();
+//		particles.emission.enabled = false;
 	}
 
 	void Start () {
@@ -117,6 +124,11 @@ public class Player : MonoBehaviour {
 			// Call game manager finish function
 			this.gameManager.EndGame();
 		}
+
+//		if (!IsBoosting)
+//			particles.Stop ();
+//		else
+//			particles.Play ();
 	}
 
 	void FixedUpdate() {
