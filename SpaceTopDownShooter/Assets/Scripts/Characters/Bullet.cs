@@ -17,7 +17,7 @@ public class Bullet : MonoBehaviour {
 	public float damage = -5;
 
 	void OnEnable() {
-		Debug.Log ("The bullets are being enabled");
+//		Debug.Log ("The bullets are being enabled");
 		currentTimer = destroyTimer;
 	}
 

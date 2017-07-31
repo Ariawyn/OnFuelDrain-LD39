@@ -10,6 +10,15 @@ public class Enemy : MonoBehaviour {
 	// GameObject prefab for bullet
 	public GameObject bullet;
 
+	// GameOBject prefab for the health pickups
+	public GameObject healthPickup;
+
+	// Health pickup amount to heal.
+	public float pickupHealAmount;
+
+	// Whether or not this enemy drops health when killed.
+	public bool dropsHealth;
+
 	// CharacterMotor instance
 	private CharacterMotor motor;
 
@@ -85,6 +94,8 @@ public class Enemy : MonoBehaviour {
 		if (health <= 0) {
 //			Destroy (this.gameObject);
 			SimplePool.Despawn(this.gameObject);
+			if (dropsHealth)
+				SpawnHealthPickup ();
 			this.gameManager.UpdateScore(this.worth);
 			this.gameManager.DecrementEnemyCount();
 		}
@@ -118,5 +129,13 @@ public class Enemy : MonoBehaviour {
 	public void TakeDamage(float damage) {
 //		Debug.Log ("Yass you got the bad guy");
 		health -= damage;
+	}
+
+	void SpawnHealthPickup(bool customPickup = false) {
+		Debug.Log ("I dropped a pickup!");
+		GameObject pickupGO = SimplePool.Spawn (healthPickup, this.transform.position, Quaternion.identity);
+		HealthPickup pickup = pickupGO.GetComponent<HealthPickup> ();
+		if (customPickup)
+			pickup.healthValue = pickupHealAmount;
 	}
 }

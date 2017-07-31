@@ -263,6 +263,11 @@ public class GameManager : MonoBehaviour {
 				// Set the players position as target
 				spawned.target = this.player.transform;
 
+				// TODO: Determine whether the enemy drops health. This probably shouldn't just be random.
+				float dropsHealth = Random.Range(0,1);
+
+				spawned.dropsHealth = (dropsHealth == 0) ? false : true;
+
 				// Increment basic enemy count
 				this.basicEnemyCount++;
 			} else {
