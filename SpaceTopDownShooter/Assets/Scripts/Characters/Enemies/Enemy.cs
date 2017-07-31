@@ -10,6 +10,15 @@ public class Enemy : MonoBehaviour {
 	// GameObject prefab for bullet
 	public GameObject bullet;
 
+	// GameOBject prefab for the health pickups
+	public GameObject healthPickup;
+
+	// Health pickup amount to heal.
+	public float pickupHealAmount;
+
+	// Whether or not this enemy drops health when killed.
+	public bool dropsHealth;
+
 	// CharacterMotor instance
 	private CharacterMotor motor;
 
@@ -35,13 +44,38 @@ public class Enemy : MonoBehaviour {
 
 	private AudioManager audioManager;
 
-	void Awake() {
+	public Transform[] gunTransforms;
+
+//	void Awake() {
+//		this.gameManager = Object.FindObjectOfType<GameManager>();
+//		this.audioManager = Object.FindObjectOfType<AudioManager>();
+//	}
+//
+//	// Use this for initialization
+//	void Start () {
+//		this.maxDistance = this.shootDistanceThreshold = 8f;
+//		this.minDistance = 4f;
+//
+//		this.inRange = false;
+//
+//		this.worth = 5;
+//
+//		this.speed = 14f;
+//
+//		this.shootTime = 2.0f;
+//		this.currentShootTimer = this.shootTime;
+//
+//		this.motor = GetComponent<CharacterMotor>();
+//	}
+
+	/// <summary>
+	/// SimplePool can't call Start() or Awake() on Spawning, so I'm moving all of the intialization stuff to this function..
+	/// That way, we can call Initialize in the game manager for every spawn.
+	/// </summary>
+	public void InitializeEverything() {
 		this.gameManager = Object.FindObjectOfType<GameManager>();
 		this.audioManager = Object.FindObjectOfType<AudioManager>();
-	}
 
-	// Use this for initialization
-	void Start () {
 		this.maxDistance = this.shootDistanceThreshold = 8f;
 		this.minDistance = 4f;
 
@@ -55,11 +89,15 @@ public class Enemy : MonoBehaviour {
 		this.currentShootTimer = this.shootTime;
 
 		this.motor = GetComponent<CharacterMotor>();
+
 	}
 
 	void Update() {
 		if (health <= 0) {
-			Destroy (this.gameObject);
+//			Destroy (this.gameObject);
+			SimplePool.Despawn(this.gameObject);
+			if (dropsHealth)
+				SpawnHealthPickup ();
 			this.gameManager.UpdateScore(this.worth);
 			this.gameManager.DecrementEnemyCount();
 		}
@@ -82,16 +120,28 @@ public class Enemy : MonoBehaviour {
 
 	private void Shoot() {
 		this.audioManager.Play("Fire!");
-		Vector3 startPosition = this.transform.position + (this.transform.up * 0.25f);
-		GameObject instantiatedBullet = GameObject.Instantiate (this.bullet, startPosition, transform.rotation);
-		Bullet currentBullet = instantiatedBullet.GetComponent<Bullet>();
-//						GameObject bullet = SimplePool.Spawn(bulletGO,t.position,transform.rotation);
-		currentBullet.SetBulletSpeed (bulletSpeed);
-		currentBullet.hurtsPlayer = true;
+		foreach (Transform t in gunTransforms) {
+			Vector3 startPosition = t.position;
+			//		GameObject instantiatedBullet = GameObject.Instantiate (this.bullet, startPosition, transform.rotation);
+			GameObject instantiatedBullet = SimplePool.Spawn(this.bullet,startPosition,transform.rotation);
+			Bullet currentBullet = instantiatedBullet.GetComponent<Bullet>();
+
+			currentBullet.SetBulletSpeed (bulletSpeed);
+			currentBullet.hurtsPlayer = true;
+		}
+
 	}
 
-	public void TakeDamage(float damage) {
+	public void UpdateHealth(float damage) {
 //		Debug.Log ("Yass you got the bad guy");
-		health -= damage;
+		health += damage;
+	}
+
+	void SpawnHealthPickup(bool customPickup = false) {
+		Debug.Log ("I dropped a pickup!");
+		GameObject pickupGO = SimplePool.Spawn (healthPickup, this.transform.position, Quaternion.identity);
+		HealthPickup pickup = pickupGO.GetComponent<HealthPickup> ();
+		if (customPickup)
+			pickup.healthValue = pickupHealAmount;
 	}
 }

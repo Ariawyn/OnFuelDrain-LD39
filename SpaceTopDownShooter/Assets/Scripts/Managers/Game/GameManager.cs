@@ -253,11 +253,23 @@ public class GameManager : MonoBehaviour {
 				spawnPoint = this.player.transform.position + spawnPoint;
 
 				// Instantiate the enemy
-				GameObject instantiated = (GameObject)Instantiate(this.basicEnemyPrefab, spawnPoint, Quaternion.identity);
+//				GameObject instantiated = (GameObject)Instantiate(this.basicEnemyPrefab, spawnPoint, Quaternion.identity);
+				GameObject instantiated = SimplePool.Spawn(this.basicEnemyPrefab, spawnPoint, Quaternion.identity);
 				Enemy spawned = instantiated.GetComponent<Enemy>();
+
+				// SimplePool can't call Awake() or Start() on spawn, so we need to manually call that stuff.
+				spawned.InitializeEverything ();
 
 				// Set the players position as target
 				spawned.target = this.player.transform;
+
+				// TODO: Determine whether the enemy drops health. This probably shouldn't just be random.
+				float dropsHealth = Random.Range(0,2);
+
+				if (dropsHealth == 1)
+					Debug.Log ("The enemy should have dropsHealth set to true");
+
+				spawned.dropsHealth = (dropsHealth < 1) ? false : true;
 
 				// Increment basic enemy count
 				this.basicEnemyCount++;
