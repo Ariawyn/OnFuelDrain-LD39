@@ -33,8 +33,13 @@ public class GameManager : MonoBehaviour {
 	// Enemy spawn time values
 	public int basicEnemySpawnTime; 
 
+	// Max total basic enemy count
+	private int basicEnemyCount;
+	private int maxBasicEnemyAmount;
+
 	// Spawner variables
 	private bool hasSpawnedForBasicEnemyTime;
+	private int maxBasicEnemyGroupSpawnAmount;
 	private int lastSpawnTime;
 	private int spawnOffsetDistance;
 
@@ -64,8 +69,13 @@ public class GameManager : MonoBehaviour {
 		// Set enemy spawn times
 		this.basicEnemySpawnTime = 4;
 
+		// Set enemy max amount
+		this.maxBasicEnemyAmount = 60;
+		this.basicEnemyCount = 0;
+
 		// Set spawner variables
 		this.hasSpawnedForBasicEnemyTime = false;
+		this.maxBasicEnemyGroupSpawnAmount = 5;
 		this.lastSpawnTime = 0;
 		this.spawnOffsetDistance = 20;
 
@@ -114,11 +124,20 @@ public class GameManager : MonoBehaviour {
 
 			if((roundedTimer % this.basicEnemySpawnTime == 0) && (roundedTimer != 0) && (!this.hasSpawnedForBasicEnemyTime)) {
 				// We now need to spawn enemies
+
+				// Calculate amount we wish to spawn based on the timer
 				int amountOfEnemiesToSpawn = 1 * Mathf.FloorToInt(roundedTimer / this.basicEnemySpawnTime) / 2;
 
+				// Check if the amount we want is greater than the max amount allowed to spawn at once
+				// If it is, then we just set the desired amount to the max amount
+				amountOfEnemiesToSpawn = (amountOfEnemiesToSpawn > this.maxBasicEnemyGroupSpawnAmount)? 
+					this.maxBasicEnemyGroupSpawnAmount : amountOfEnemiesToSpawn;
+
+				// Set spawner variables
 				this.hasSpawnedForBasicEnemyTime = true;
 				this.lastSpawnTime = roundedTimer;
 
+				// Call spawn function with desired amount
 				this.SpawnBasicEnemies(amountOfEnemiesToSpawn);
 			}
 		}
@@ -192,26 +211,39 @@ public class GameManager : MonoBehaviour {
 		OnScoreUpdated(roundedPoints);
 	}
 
+	public void DecrementEnemyCount() {
+		this.basicEnemyCount--;
+	}
+
 	private void SpawnBasicEnemies(int amount) {
 		// Loop through amount
 		for(int i = 0; i < amount; i++) {
-			// Get random radian angle
-			float radian = Random.Range(0f, Mathf.PI*2);
-			
-			// Calculate x and y pos of angle
-			float xPos = Mathf.Cos(radian);
-			float yPos = Mathf.Sin(radian);
+			// Check if we would exceed the max basic enemy amount allowed
+			if(this.basicEnemyCount + 1 < this.maxBasicEnemyAmount) {
+				// Get random radian angle
+				float radian = Random.Range(0f, Mathf.PI*2);
+				
+				// Calculate x and y pos of angle
+				float xPos = Mathf.Cos(radian);
+				float yPos = Mathf.Sin(radian);
 
-			// Calculate spawn point from spawn offset distance and the player position
-			Vector3 spawnPoint = new Vector3(xPos, yPos, 0) * this.spawnOffsetDistance;
-			spawnPoint = this.player.transform.position + spawnPoint;
+				// Calculate spawn point from spawn offset distance and the player position
+				Vector3 spawnPoint = new Vector3(xPos, yPos, 0) * this.spawnOffsetDistance;
+				spawnPoint = this.player.transform.position + spawnPoint;
 
-			// Instantiate the enemy
-			GameObject instantiated = (GameObject)Instantiate(this.basicEnemyPrefab, spawnPoint, Quaternion.identity);
-			Enemy spawned = instantiated.GetComponent<Enemy>();
+				// Instantiate the enemy
+				GameObject instantiated = (GameObject)Instantiate(this.basicEnemyPrefab, spawnPoint, Quaternion.identity);
+				Enemy spawned = instantiated.GetComponent<Enemy>();
 
-			// Set the players position as target
-			spawned.target = this.player.transform;
+				// Set the players position as target
+				spawned.target = this.player.transform;
+
+				// Increment basic enemy count
+				this.basicEnemyCount++;
+			} else {
+				// If we would exceed the max basic enemy amount allowed, then we just return early and do nothing more
+				return;
+			}
 		}
 	}
 

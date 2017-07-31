@@ -50,6 +50,7 @@ public class Enemy : MonoBehaviour {
 		if (health <= 0) {
 			Destroy (this.gameObject);
 			this.gameManager.UpdateScore(this.worth);
+			this.gameManager.DecrementEnemyCount();
 		}
 	}
 
