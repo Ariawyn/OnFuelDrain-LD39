@@ -119,9 +119,10 @@ public class Enemy : MonoBehaviour {
 	private void Shoot() {
 		this.audioManager.Play("Fire!");
 		Vector3 startPosition = this.transform.position + (this.transform.up * 0.25f);
-		GameObject instantiatedBullet = GameObject.Instantiate (this.bullet, startPosition, transform.rotation);
+//		GameObject instantiatedBullet = GameObject.Instantiate (this.bullet, startPosition, transform.rotation);
+		GameObject instantiatedBullet = SimplePool.Spawn(this.bullet,startPosition,transform.rotation);
 		Bullet currentBullet = instantiatedBullet.GetComponent<Bullet>();
-//						GameObject bullet = SimplePool.Spawn(bulletGO,t.position,transform.rotation);
+						
 		currentBullet.SetBulletSpeed (bulletSpeed);
 		currentBullet.hurtsPlayer = true;
 	}
