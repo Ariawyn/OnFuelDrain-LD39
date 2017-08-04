@@ -155,9 +155,19 @@ public class CharacterMotor : MonoBehaviour {
 			mVars.moveAmount = transform.up * currentSpeed * Time.fixedDeltaTime;
 //		body.position += mVars.moveAmount;
 		if (mVars.oldMoveAmount != mVars.moveAmount) {
-			Decelerate (mVars.oldMoveAmount,4);
+//			Decelerate (mVars.oldMoveAmount,4);
+			if (Mathf.Sign (mVars.oldMoveAmount.x) != Mathf.Sign (mVars.moveAmount.x) 
+				|| Mathf.Abs(mVars.oldMoveAmount.x - mVars.moveAmount.x) > 5f) {
+				Decelerate(new Vector3(mVars.moveAmount.x - mVars.oldMoveAmount.x,0,0),50);
+			}
+			if (Mathf.Sign (mVars.oldMoveAmount.y) != Mathf.Sign (mVars.moveAmount.y) 
+				|| Mathf.Abs(mVars.oldMoveAmount.y - mVars.moveAmount.y) > 5f) {
+				Decelerate(new Vector3(0,mVars.moveAmount.y - mVars.oldMoveAmount.y,0),50);
+			}
+//			Decelerate(mVars.moveAmount - mVars.oldMoveAmount,4);
 			mVars.moveAmount *= 2;
 		}
+
 
 		if (thrusting)
 			body.AddForce(mVars.moveAmount,ForceMode2D.Force);
@@ -171,7 +181,7 @@ public class CharacterMotor : MonoBehaviour {
 //		currentSpeed -= acceleration * multiplier;
 //		if (currentSpeed < 0)
 //			currentSpeed = 0;
-		body.AddForce(-mVars.moveAmount * multiplier, ForceMode2D.Force);
+		body.AddForce(move * multiplier, ForceMode2D.Force);
 	}
 
 	struct MovementVars{
