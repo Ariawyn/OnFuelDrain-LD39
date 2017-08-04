@@ -148,7 +148,7 @@ public class CharacterMotor : MonoBehaviour {
 			}
 			thrusting = true;
 		} else if (vertInput < 0) {
-			Decelerate (mVars.moveAmount);
+			Decelerate (-mVars.moveAmount);
 		}
 		mVars.oldMoveAmount = mVars.moveAmount;
 		if (thrusting)
